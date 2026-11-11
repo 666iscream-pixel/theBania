@@ -15,12 +15,12 @@ const ICON = {
 // Kolejność: szybki kontakt → napisz wiadomość → mapa i dojazd
 export default function Kontakt() {
   return (
-    <PageShell art="bell" eyebrow="Kontakt" title="Zapraszamy." intro="Zadzwoń, napisz albo zarezerwuj online — wolne terminy widzisz od razu.">
+    <PageShell art="bell" eyebrow="Kontakt" title="Zapraszamy." intro="Termin najszybciej zarezerwujesz online — wolne godziny widzisz od razu. Masz pytanie? Napisz albo zadzwoń.">
       {/* 1. Szybki kontakt */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card icon="pin" label="Adres" value={CONFIG.address} action={{ href: CONFIG.googleMaps, text: "Wyznacz trasę", external: true }} />
-        <Card icon="phone" label="Telefon" value={CONFIG.phone} action={{ href: CONFIG.phoneHref, text: "Zadzwoń" }} />
-        <Card icon="clock" label="Godziny" value="Codziennie 12:00–00:00" note="Wyłącznie po rezerwacji" action={{ href: "/rezerwacja", text: "Zarezerwuj termin" }} />
+      <div className="grid divide-y divide-ink/10 rounded-[1.75rem] bg-peach md:grid-cols-3 md:divide-x md:divide-y-0">
+        <Item icon="pin" label="Adres" value={CONFIG.address} action={{ href: CONFIG.googleMaps, text: "Wyznacz trasę", external: true }} />
+        <Item icon="phone" label="Telefon" value={CONFIG.phone} action={{ href: CONFIG.phoneHref, text: "Zadzwoń" }} />
+        <Item icon="clock" label="Godziny" value="Codziennie 12:00–00:00" action={{ href: "/rezerwacja", text: "Zarezerwuj termin" }} />
       </div>
 
       {/* 2. Wiadomość */}
@@ -53,19 +53,20 @@ export default function Kontakt() {
   );
 }
 
-function Card({ icon, label, value, note, action }: { icon: keyof typeof ICON; label: string; value: string; note?: string; action: { href: string; text: string; external?: boolean } }) {
+function Item({ icon, label, value, action }: { icon: keyof typeof ICON; label: string; value: string; action: { href: string; text: string; external?: boolean } }) {
   const ext = action.external ? { target: "_blank", rel: "noreferrer" } : {};
   return (
-    <div className="flex flex-col rounded-[1.75rem] bg-peach p-6">
-      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink text-peach">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden><path d={ICON[icon]} /></svg>
+    <div className="flex items-start gap-4 p-6">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-peach">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden><path d={ICON[icon]} /></svg>
       </span>
-      <p className="mt-4 font-hand text-2xl text-moss">{label}</p>
-      <p className="text-lg font-bold">{value}</p>
-      {note && <p className="text-sm text-muted">{note}</p>}
-      <a href={action.href} {...ext} className="mt-auto pt-5 font-bold underline underline-offset-4 hover:no-underline">
-        {action.text} →
-      </a>
+      <div className="min-w-0">
+        <p className="text-sm text-muted">{label}</p>
+        <p className="font-bold">{value}</p>
+        <a href={action.href} {...ext} className="mt-1 inline-block text-sm font-semibold underline underline-offset-4 hover:no-underline">
+          {action.text} →
+        </a>
+      </div>
     </div>
   );
 }

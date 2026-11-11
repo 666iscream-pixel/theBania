@@ -504,7 +504,7 @@ function Flow() {
             <ul className="mt-3 space-y-3 text-sm">
               <Info icon="card" title={`Zadatek ${CONFIG.deposit} zł`} text="Płatny online przy rezerwacji, bezzwrotny." />
               <Info icon="home" title="Reszta na miejscu" text="Płacisz w dniu wizyty." />
-              <Info icon="phone" title="Masz pytanie?" text={<a href={CONFIG.phoneHref} className="font-semibold text-ink underline underline-offset-2">{CONFIG.phone}</a>} />
+              <Info icon="help" title="Masz pytanie?" text={<Link href="/regulamin#faq" target="_blank" className="font-semibold text-ink underline underline-offset-2">Odpowiedzi w FAQ</Link>} />
             </ul>
             <Link href="/regulamin#rezerwacja" target="_blank" className="mt-4 flex items-center justify-between rounded-xl bg-peach px-4 py-2.5 text-sm font-bold transition hover:bg-sand hover:text-paper">
               Zasady rezerwacji <span aria-hidden>→</span>
@@ -564,6 +564,7 @@ function Calendar({ today, selected, onPick, availability }: { today: string; se
 const ICONS = {
   card: "M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11ZM3 9h18v2H3V9Zm3 6h4v1.5H6V15Z",
   home: "M12 3 2.5 11h2.5v9h5.5v-6h3v6H19v-9h2.5L12 3Z",
+  help: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-2h2v2Zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.4-2.1 1.2-2.8l1.2-1.3c.4-.4.6-.9.6-1.4a2 2 0 0 0-4 0H8a4 4 0 0 1 8 0c0 .9-.4 1.7-.9 2.3Z",
   phone: "M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8Z",
 };
 
