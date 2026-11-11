@@ -103,6 +103,8 @@ function Flow() {
     setDate(d);
     setStart(null);
     setExpired(false);
+    // Długość i godziny są pod kalendarzem — przewijamy do nich, szczególnie ważne na telefonie.
+    setTimeout(() => document.getElementById("day-panel")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   }
 
   // Wybór godziny od razu prowadzi dalej — mniej kliknięć na telefonie.
@@ -217,7 +219,7 @@ function Flow() {
   return (
     <div>
       <h1 className="font-display text-5xl">Rezerwacja.</h1>
-      <ol className="mt-6 flex gap-2 overflow-x-auto pb-1 text-sm">
+      <ol className="mt-6 flex flex-wrap gap-2 text-sm">
         {STEPS.map((s, i) => (
           <li
             key={s}
@@ -247,22 +249,6 @@ function Flow() {
           {step === 0 && (
             <div className="space-y-8">
               <section>
-                <h2 className="text-lg font-semibold">Na ile godzin?</h2>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {DURATIONS.map((d) => (
-                    <button
-                      key={d}
-                      onClick={() => chooseDuration(d)}
-                      className={`rounded-full px-5 py-2.5 font-semibold transition ${duration === d ? "bg-ink text-cream" : "bg-paper ring-1 ring-line hover:ring-ink"}`}
-                    >
-                      {d} h
-                    </button>
-                  ))}
-                </div>
-                <p className="mt-2 text-sm text-muted">Minimum 2 godziny. Od 3. godziny −50%.</p>
-              </section>
-
-              <section>
                 <h2 className="text-lg font-semibold">Wybierz dzień</h2>
                 <Calendar
                   today={today}
@@ -270,13 +256,14 @@ function Flow() {
                   onPick={pickDate}
                   availability={(d) => {
                     if (!dayOpen(d, now)) return -1;
-                    return daySlots({ ...slotOpts, date: d, bookings: bookingsFor(d) }).filter((s) => s.ok).length;
+                    // Czy w ogóle jest coś wolnego (od min. 2 h) — długość gość wybiera po kliknięciu w dzień
+                    return daySlots({ ...slotOpts, duration: CONFIG.minHours, date: d, bookings: bookingsFor(d) }).filter((s) => s.ok).length;
                   }}
                 />
               </section>
 
               {date && (
-                <section className="rounded-3xl bg-paper p-5 ring-1 ring-line sm:p-6">
+                <section id="day-panel" className="scroll-mt-28 rounded-3xl bg-paper p-5 ring-1 ring-line sm:p-6">
                   <h2 className="text-lg font-semibold first-letter:uppercase">{fmtDate(date)}</h2>
                   {/* Logika (sezon, oś dnia ze sprzątaniem) — tylko w trybie prezentacji, gościa by myliła */}
                   {settings.showHidden && (
@@ -290,9 +277,23 @@ function Flow() {
                     </div>
                   )}
 
+                  <h3 className="mt-4 text-sm font-semibold">Na ile godzin?</h3>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {DURATIONS.map((d) => (
+                      <button
+                        key={d}
+                        onClick={() => chooseDuration(d)}
+                        className={`rounded-full px-4 py-2 text-sm font-semibold transition ${duration === d ? "bg-ink text-cream" : "bg-cream ring-1 ring-line hover:ring-ink"}`}
+                      >
+                        {d} h
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-1.5 text-xs text-muted">Minimum 2 godziny. Od 3. godziny −50%.</p>
+
                   {okSlots.length > 0 ? (
                     <>
-                      <h3 className="mt-4 text-sm font-semibold">Wybierz godzinę ({duration} h)</h3>
+                      <h3 className="mt-5 text-sm font-semibold">Wybierz godzinę</h3>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {(settings.showHidden ? slots : okSlots).map((s) =>
                           s.ok ? (
@@ -657,7 +658,7 @@ function Calendar({ today, selected, onPick, availability }: { today: string; se
             >
               <span className="font-semibold">{Number(d.slice(8))}</span>
               {!closed && (
-                <span className={`text-[10px] ${sel ? "text-cream/80" : n === 0 ? "text-muted" : "text-moss"}`}>{n === 0 ? "brak" : plTerms(n)}</span>
+                <span className={`text-[10px] ${sel ? "text-cream/80" : n === 0 ? "text-muted" : n <= 2 ? "text-wood" : "text-moss"}`}>{n === 0 ? "brak" : n <= 2 ? "mało" : "wolne"}</span>
               )}
             </button>
           );
@@ -687,12 +688,6 @@ function Info({ icon, title, text }: { icon: keyof typeof ICONS; title: string; 
       </div>
     </li>
   );
-}
-
-function plTerms(n: number) {
-  if (n === 1) return "1 termin";
-  const few = n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14);
-  return `${n} ${few ? "terminy" : "terminów"}`;
 }
 
 function Stepper({ value, max, onChange, disabled }: { value: number; max: number; onChange: (v: number) => void; disabled?: boolean }) {
