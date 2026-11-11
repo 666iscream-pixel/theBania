@@ -35,10 +35,10 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-line/70 bg-peach/95 backdrop-blur">
-      <div className="wrap flex items-center justify-between gap-4 py-2">
+      <div className="wrap flex items-center justify-between gap-4 py-1.5">
         <Link href="/" className="flex shrink-0 items-center" aria-label="The Bania — strona główna">
-          <span className="sm:hidden"><Logo size={56} /></span>
-          <span className="hidden sm:block"><Logo size={72} /></span>
+          <span className="sm:hidden"><Logo size={64} /></span>
+          <span className="hidden sm:block"><Logo size={92} /></span>
         </Link>
         <nav className="hidden items-center gap-6 text-[15px] font-medium xl:gap-7 lg:flex" aria-label="Menu główne">
           {NAV.map((n) => (
@@ -67,8 +67,8 @@ export function SiteHeader() {
               </button>
             ))}
           </div>
-          <Link href="/rezerwacja" className="hidden rounded-full bg-ink px-5 py-2.5 lg:inline-block text-sm font-bold text-peach shadow-sm transition hover:bg-wood-dark">
-            Zarezerwuj
+          <Link href="/rezerwacja" className="hidden rounded-full bg-ember px-5 py-3 text-sm font-bold text-white shadow-md shadow-ember/25 transition hover:-translate-y-0.5 hover:bg-[#c71f1a] lg:inline-block">
+            Zarezerwuj termin
           </Link>
           <button className="-mr-1 p-1 lg:hidden" onClick={() => setOpen(!open)} aria-label={open ? "Zamknij menu" : "Otwórz menu"} aria-expanded={open}>
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">

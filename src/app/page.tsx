@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Art, Dashes, Leaf, PostTitle, type ArtName } from "@/components/Art";
 import { Socials } from "@/components/Socials";
+import { NextSlot } from "@/components/NextSlot";
 import { CONFIG } from "@/lib/config";
 
 // Kafelki w stylu postów edukacyjnych z Instagrama
@@ -55,8 +56,8 @@ export default function Home() {
                 Prawdziwa para, witki i gorąca beczka z hydromasażem. Cały obiekt tylko dla Was i Waszych bliskich.
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
-                <Link href="/rezerwacja" className="rounded-full bg-ink px-7 py-3.5 font-bold text-peach shadow-lg transition hover:bg-wood-dark">
-                  Zarezerwuj termin online
+                <Link href="/rezerwacja" className="rounded-full bg-ember px-7 py-4 font-bold text-white shadow-lg shadow-ember/30 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">
+                  Sprawdź wolne terminy →
                 </Link>
                 <Link href="/cennik" className="rounded-full border-2 border-ink px-6 py-3 font-bold transition hover:bg-ink hover:text-peach">
                   Cennik
@@ -64,6 +65,9 @@ export default function Home() {
                 <a href={CONFIG.phoneHref} className="px-2 text-sm font-semibold underline underline-offset-4">
                   {CONFIG.phone}
                 </a>
+              </div>
+              <div className="mt-4">
+                <NextSlot />
               </div>
               <dl className="mt-9 grid max-w-lg grid-cols-3 gap-4 border-t-2 border-ink/10 pt-5">
                 {FACTS.map((f) => (
@@ -108,7 +112,7 @@ export default function Home() {
           <div className="lg:order-2">
             <PostTitle art="bell" title="Rezerwacja." sub="Bez dzwonienia — wolne terminy widzisz od razu, o każdej porze." />
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/rezerwacja" className="rounded-full bg-ink px-7 py-3.5 font-bold text-peach transition hover:bg-wood-dark">Sprawdź wolne terminy</Link>
+              <Link href="/rezerwacja" className="rounded-full bg-ember px-7 py-3.5 font-bold text-white shadow-lg shadow-ember/25 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">Sprawdź wolne terminy →</Link>
               <a href={CONFIG.phoneHref} className="rounded-full border-2 border-ink px-6 py-3 font-bold">{CONFIG.phone}</a>
             </div>
           </div>

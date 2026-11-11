@@ -24,8 +24,15 @@ export function Loading() {
 function Flow() {
   const { settings, now, bookingsFor, addBooking } = useDemo();
   const [step, setStep] = useState(0);
-  const [duration, setDuration] = useState(3);
-  const [date, setDate] = useState<string | null>(null);
+  // Flow renderuje się tylko po hydratacji, więc można bezpiecznie czytać adres (link „najbliższy wolny termin”).
+  const [initial] = useState(() => {
+    const q = new URLSearchParams(window.location.search);
+    const d = q.get("d");
+    const h = Number(q.get("h"));
+    return { date: d && /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : null, hours: DURATIONS.includes(h) ? h : 3 };
+  });
+  const [duration, setDuration] = useState(initial.hours);
+  const [date, setDate] = useState<string | null>(initial.date);
   const [start, setStart] = useState<number | null>(null);
   const [guests, setGuests] = useState(4);
   const [tubHours, setTubHours] = useState(0);

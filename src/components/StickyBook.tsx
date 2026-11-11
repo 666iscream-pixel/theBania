@@ -13,8 +13,8 @@ export function StickyBook() {
       <div className="h-20 lg:hidden" aria-hidden />
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line/70 bg-peach/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
         <div className="mx-auto flex max-w-md gap-2">
-          <Link href="/rezerwacja" className="flex-1 rounded-full bg-ink py-3.5 text-center font-bold text-peach shadow-lg">
-            Zarezerwuj termin
+          <Link href="/rezerwacja" className="flex-1 rounded-full bg-ember py-3.5 text-center font-bold text-white shadow-lg shadow-ember/25">
+            Sprawdź wolne terminy
           </Link>
           <a href={CONFIG.phoneHref} aria-label={`Zadzwoń: ${CONFIG.phone}`} className="flex w-14 items-center justify-center rounded-full border-2 border-ink text-ink">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden>

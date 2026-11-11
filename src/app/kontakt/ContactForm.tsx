@@ -27,9 +27,7 @@ export function ContactForm() {
       }}
       className="rounded-[2rem] bg-paper p-8 ring-1 ring-line sm:p-10"
     >
-      <h2 className="font-display text-3xl">Napisz do nas.</h2>
-      <p className="mt-1 text-muted">Pytania o voucher, większą grupę, wydarzenie firmowe — chętnie pomożemy.</p>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Imię" name="name" autoComplete="name" />
         <Field label="E-mail" name="email" type="email" autoComplete="email" />
         <Field label="Telefon (opcjonalnie)" name="phone" type="tel" autoComplete="tel" required={false} />
