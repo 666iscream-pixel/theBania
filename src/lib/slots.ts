@@ -37,7 +37,7 @@ function blocksOf(bookings: Booking[]) {
 }
 
 // Czy w wolny kawałek o długości `len` zmieści się jeszcze jeden gość.
-// Przed kolejną rezerwacją: min. rezerwacja + sprzątanie. Na koniec dnia: próg z konfiguracji (TZ — 3 h).
+// Wolny kawałek przed kolejną rezerwacją musi pomieścić min. rezerwację + sprzątanie.
 function sellable(len: number, beforeBooking: boolean) {
   return len === 0 || len >= (beforeBooking ? MIN + BUF : CONFIG.minTailHours);
 }
@@ -91,8 +91,19 @@ export function daySlots(o: SlotOptions): Slot[] {
         slots.push({ ...slot, ok: false, reason: "gap-before", detail: `Przed rezerwacją zostałoby ${before} h, których nikt już nie zarezerwuje.` });
         continue;
       }
-      if (!sellable(after, nextStart < CLOSE)) {
-        slots.push({ ...slot, ok: false, reason: "gap-after", detail: `Po rezerwacji i sprzątaniu zostałoby ${after} h, których nikt już nie zarezerwuje.` });
+      // Przed kolejną rezerwacją: liczymy wolne po sprzątaniu.
+      // Na koniec dnia: albo kończymy dokładnie o zamknięciu, albo zostaje sprzątanie + min. `minTailHours`
+      // (np. 3 h: 17–20 ok, bo potem 21–00; 18–21 i 20–23 odpadają — ogon wieczoru by przepadł).
+      const tail = CLOSE - end;
+      const okAfter = nextStart < CLOSE ? sellable(after, true) : tail === 0 || tail >= BUF + CONFIG.minTailHours;
+      if (!okAfter) {
+        const lost = nextStart < CLOSE ? after : Math.max(0, tail - BUF);
+        slots.push({
+          ...slot,
+          ok: false,
+          reason: "gap-after",
+          detail: nextStart < CLOSE || lost > 0 ? `Po rezerwacji i sprzątaniu zostałoby ${lost} h, których nikt już nie zarezerwuje.` : `Ostatnia godzina dnia przepadłaby — wieczorna rezerwacja powinna kończyć się o ${CLOSE % 24}:00.`,
+        });
         continue;
       }
       if (o.keepEvening && load <= CONFIG.keepEvening.maxLoad && h < eveningFrom && blockEnd > eveningFrom) {
