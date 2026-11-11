@@ -133,9 +133,11 @@ export default function Home() {
                     <img src={`/img/${v.img}.jpg`} alt="" loading="lazy" className="h-full w-full object-cover" />
                     <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-paper font-bold">{i + 1}</span>
                   </div>
-                  <div className="relative flex-1 p-6">
-                    <Art name={v.art} className="pointer-events-none absolute -top-10 right-4 h-20 w-16 object-contain" />
-                    <h3 className="font-display text-2xl">{v.title}</h3>
+                  <div className="flex-1 p-6">
+                    <div className="flex items-center justify-between gap-3">
+                      <h3 className="font-display text-2xl">{v.title}</h3>
+                      <Art name={v.art} className="h-12 w-12 shrink-0 object-contain" />
+                    </div>
                     <p className="mt-2 leading-snug text-muted">{v.text}</p>
                   </div>
                 </article>
