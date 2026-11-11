@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
 import { addDays, fmtDate, fmtHour, todayKey } from "@/lib/dates";
 import { dayOpen, daySlots } from "@/lib/slots";
 import { useDemo } from "@/lib/store";
@@ -12,8 +11,9 @@ const DURATION = 3;
 export function NextSlot() {
   const { ready, now, bookingsFor, settings } = useDemo();
 
-  const next = useMemo(() => {
-    if (!ready) return null;
+  const next = ready ? findNext() : null;
+
+  function findNext() {
     const today = todayKey(now);
     for (let i = 0; i < 30; i++) {
       const date = addDays(today, i);
@@ -22,7 +22,7 @@ export function NextSlot() {
       if (slot) return { date, slot, i };
     }
     return null;
-  }, [ready, now, bookingsFor, settings.season, settings.keepEvening]);
+  }
 
   if (!next) return <p className="h-6" aria-hidden />;
   const day = next.i === 0 ? "dziś" : next.i === 1 ? "jutro" : fmtDate(next.date);
