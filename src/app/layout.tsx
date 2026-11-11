@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Amatic_SC, Caveat, Open_Sans } from "next/font/google";
+import { Caveat, Open_Sans } from "next/font/google";
 import { DemoProvider } from "@/lib/store";
 import "./globals.css";
 
@@ -15,12 +15,6 @@ const caveat = Caveat({
   weight: ["500", "700"],
 });
 
-const amatic = Amatic_SC({
-  variable: "--font-amatic",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  weight: ["400", "700"],
-});
-
 export const metadata: Metadata = {
   title: "The Bania Wrocław — bania opalana drewnem, wynajem na wyłączność",
   description:
@@ -30,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pl" className={`${open.variable} ${caveat.variable} ${amatic.variable} h-full antialiased`}>
+    <html lang="pl" className={`${open.variable} ${caveat.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <DemoProvider>{children}</DemoProvider>
       </body>
