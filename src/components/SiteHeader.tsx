@@ -7,7 +7,7 @@ import { Logo } from "./Logo";
 
 const NAV = [
   { href: "/#o-nas", label: "O nas" },
-  { href: "/#oferta", label: "Cennik" },
+  { href: "/cennik", label: "Cennik" },
   { href: "/rezerwacja", label: "Rezerwacja" },
   { href: "/galeria", label: "Galeria" },
   { href: "/regulamin", label: "Regulamin i FAQ" },
