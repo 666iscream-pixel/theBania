@@ -1,32 +1,33 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { Art, Dashes, PostTitle, type ArtName } from "@/components/Art";
+import { Dashes, PostTitle } from "@/components/Art";
 import { Socials } from "@/components/Socials";
 import { NextSlot } from "@/components/NextSlot";
+import { Occasions } from "@/components/Occasions";
 import { CONFIG } from "@/lib/config";
 
 // Kolejność: pierwsze wrażenie → kim jesteśmy → co jest na miejscu → na jaką okazję → rezerwacja → zdjęcia → opinie → kontakt.
 
-const FACTS: { art: ArtName; title: string; text: string }[] = [
-  { art: "window", title: "Na wyłączność", text: "Cały obiekt tylko dla Waszej grupy — bez obcych ludzi." },
-  { art: "lady", title: "Do 12 osób", text: "Cena obejmuje 6 osób, większa grupa za dopłatą." },
-  { art: "hat", title: "Wszystko na miejscu", text: "Czapeczki, rękawiczki, kapcie, herbata, miód i owoce." },
-  { art: "hourglass", title: "Codziennie 12–24", text: "Minimum 2 godziny, od trzeciej każda o połowę taniej." },
+const FACTS = [
+  { value: "Tylko Wy", label: "cały obiekt na wyłączność" },
+  { value: "do 12", label: "osób w jednej grupie" },
+  { value: "40°C", label: "gorąca beczka, 20 dysz" },
+  { value: "12–24", label: "codziennie, od 2 godzin" },
 ];
 
-const VISIT: { img: string; art: ArtName; title: string; text: string }[] = [
-  { img: "steam-room-2", art: "stove", title: "Łaźnia parowa", text: "Piec opalany drewnem daje miękką, głęboką parę. Wchodzicie, kiedy chcecie i ile chcecie." },
-  { img: "witki", art: "venik", title: "Witki i parmistrz", text: "Brzozowe, dębowe lub eukaliptusowe. Doradzimy zestaw, a na życzenie ceremonię poprowadzi parmistrz." },
-  { img: "cold-plunge", art: "tub", title: "Gorąca i zimna beczka", text: "Gorąca beczka 40°C z hydromasażem i zimna beczka na zewnątrz — na zmianę, jak lubicie." },
-  { img: "tea", art: "teapot", title: "Strefa relaksu", text: "Herbata, miód i owoce przy stole, ogród z hamakiem i grill — bez obcych ludzi obok." },
+const VISIT: { img: string; title: string; text: string }[] = [
+  { img: "steam-room-2", title: "Łaźnia parowa", text: "Piec opalany drewnem daje miękką, głęboką parę. Wchodzicie, kiedy chcecie i ile chcecie." },
+  { img: "witki", title: "Witki i parmistrz", text: "Brzozowe, dębowe lub eukaliptusowe. Doradzimy zestaw, a na życzenie ceremonię poprowadzi parmistrz." },
+  { img: "cold-plunge", title: "Gorąca i zimna beczka", text: "Gorąca beczka 40°C z hydromasażem i zimna beczka na zewnątrz — na zmianę, jak lubicie." },
+  { img: "tea", title: "Strefa relaksu", text: "Herbata, miód i owoce przy stole, ogród z hamakiem i grill — bez obcych ludzi obok." },
 ];
 
-const OCCASIONS: { art: ArtName; title: string; text: string }[] = [
-  { art: "teapot", title: "Urodziny i święta", text: "Cały obiekt dla Was, grill w ogrodzie i stół na wspólną kolację." },
-  { art: "tub", title: "Wieczór z przyjaciółmi", text: "Para, gorąca beczka pod gołym niebem i nikt obcy obok." },
-  { art: "venik", title: "We dwoje", text: "Spokojny wieczór tylko dla Was dwojga — z ceremonią z witkami." },
-  { art: "window", title: "Spotkanie firmowe", text: "Integracja dla zespołu do 12 osób. Szczegóły ustalimy indywidualnie." },
+const OCCASIONS = [
+  { img: "tea-2", title: "Urodziny i święta", text: "Cały obiekt dla Was, grill w ogrodzie i stół na wspólną kolację." },
+  { img: "tub-evening", title: "Wieczór z przyjaciółmi", text: "Para, gorąca beczka pod gołym niebem i nikt obcy obok." },
+  { img: "witki-back", title: "We dwoje", text: "Spokojny wieczór tylko dla Was dwojga — z ceremonią z witkami." },
+  { img: "lounge", title: "Spotkanie firmowe", text: "Integracja dla zespołu do 12 osób. Szczegóły ustalimy indywidualnie." },
 ];
 
 const STEPS = [
@@ -37,10 +38,10 @@ const STEPS = [
 ];
 
 const GALLERY = [
-  { src: "exterior", alt: "Budynek bani z ogrodem" },
+  { src: "exterior-spring", alt: "Bania wiosną" },
   { src: "steam-light", alt: "Łaźnia parowa w promieniach światła" },
   { src: "tub-day", alt: "Gorąca beczka" },
-  { src: "witki-back", alt: "Ceremonia z witkami" },
+  { src: "lounge-2", alt: "Strefa wypoczynku" },
   { src: "garden-hammock", alt: "Ogród z hamakiem" },
 ];
 
@@ -91,33 +92,38 @@ export default function Home() {
           </div>
         </section>
 
-        {/* WSTĘP — kim jesteśmy */}
-        <section id="o-nas" className="wrap grid scroll-mt-24 gap-12 py-20 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:py-28">
-          <div>
-            <p className="font-hand text-3xl text-moss">O nas</p>
-            <h2 className="font-display text-4xl leading-tight sm:text-5xl">Witamy w The Bania.</h2>
-            <div className="mt-6 space-y-4 text-lg leading-relaxed text-muted">
-              <p>
-                To miejsce, w którym naprawdę zwalniasz. Piec opalany drewnem, miękka para i zapach witek — a obok tylko ludzie, z którymi chcesz spędzić ten czas.
-              </p>
-              <p>
-                Wynajmujecie cały obiekt: łaźnię parową, gorącą beczkę z hydromasażem, strefę relaksu i ogród z hamakiem. Nikt obcy nie wejdzie i nikt nie będzie Was poganiał.
-              </p>
-              <p>
-                Herbata, kawa, miód i owoce czekają na stole, czapeczki, rękawiczki i kapcie też. Wystarczy, że przyjdziecie z ręcznikiem — resztą zajmiemy się my.
-              </p>
+        {/* WSTĘP — tekst + zdjęcie miejsca tej samej wysokości, pod spodem pas faktów */}
+        <section id="o-nas" className="wrap scroll-mt-24 py-20 lg:py-28">
+          <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+            <div>
+              <p className="font-hand text-3xl text-moss">O nas</p>
+              <h2 className="font-display text-4xl leading-tight sm:text-5xl">Witamy w The Bania.</h2>
+              <div className="mt-6 space-y-4 text-lg leading-relaxed text-muted">
+                <p>
+                  To miejsce, w którym naprawdę zwalniasz. Piec opalany drewnem, miękka para i zapach witek — a obok tylko ludzie, z którymi chcesz spędzić ten czas.
+                </p>
+                <p>
+                  Wynajmujecie cały obiekt: łaźnię parową, gorącą beczkę z hydromasażem, strefę relaksu i ogród z hamakiem. Nikt obcy nie wejdzie i nikt nie będzie Was poganiał.
+                </p>
+                <p>
+                  Herbata, kawa, miód i owoce czekają na stole, czapeczki, rękawiczki i kapcie też. Wystarczy, że przyjdziecie z ręcznikiem — resztą zajmiemy się my.
+                </p>
+              </div>
+              <Link href="/cennik" className="mt-7 inline-block font-bold underline underline-offset-4 hover:no-underline">Co dokładnie jest w cenie →</Link>
             </div>
-            <Link href="/cennik" className="mt-7 inline-block font-bold underline underline-offset-4 hover:no-underline">Co dokładnie jest w cenie →</Link>
+            <div className="relative min-h-[320px] overflow-hidden rounded-[2.5rem] lg:min-h-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/img/exterior.jpg" alt="Budynek bani z tarasem i ogrodem" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+            </div>
           </div>
-          <div className="grid content-start gap-4 sm:grid-cols-2">
+          <dl className="mt-12 grid grid-cols-2 divide-ink/10 rounded-[2rem] bg-peach md:grid-cols-4 md:divide-x">
             {FACTS.map((f) => (
-              <div key={f.title} className="rounded-[1.75rem] bg-peach p-6">
-                <Art name={f.art} className="h-20 w-auto" />
-                <h3 className="mt-3 font-display text-xl">{f.title}</h3>
-                <p className="mt-1 text-sm leading-snug text-muted">{f.text}</p>
+              <div key={f.value} className="px-6 py-7 text-center">
+                <dt className="font-display text-3xl text-ember sm:text-4xl">{f.value}</dt>
+                <dd className="mt-1 text-sm text-muted">{f.label}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </section>
 
         {/* JAK WYGLĄDA WIZYTA */}
@@ -133,10 +139,7 @@ export default function Home() {
                     <img src={`/img/${v.img}.jpg`} alt="" loading="lazy" className="h-full w-full object-cover" />
                   </div>
                   <div className="flex-1 p-6">
-                    <div className="flex items-center justify-between gap-3">
-                      <h3 className="font-display text-2xl">{v.title}</h3>
-                      <Art name={v.art} className="h-12 w-12 shrink-0 object-contain" />
-                    </div>
+                    <h3 className="font-display text-2xl">{v.title}</h3>
                     <p className="mt-2 leading-snug text-muted">{v.text}</p>
                   </div>
                 </article>
@@ -145,30 +148,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* NA JAKĄ OKAZJĘ — rozkładówka: duże zdjęcie + lista (inna forma niż karty powyżej) */}
-        <section className="wrap grid items-center gap-10 py-20 lg:grid-cols-2 lg:gap-16 lg:py-24">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] sm:aspect-[4/3] lg:aspect-[4/5]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/img/tub-evening.jpg" alt="Gorąca beczka wieczorem w ogrodzie" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-          </div>
-          <div>
-            <p className="font-hand text-3xl text-moss">Dla kogo</p>
-            <h2 className="font-display text-4xl sm:text-5xl">Na każdą okazję.</h2>
-            <ul className="mt-8 divide-y divide-line border-y border-line">
-              {OCCASIONS.map((o) => (
-                <li key={o.title} className="flex items-center gap-5 py-5">
-                  <Art name={o.art} className="h-14 w-14 shrink-0 object-contain" />
-                  <div>
-                    <h3 className="font-display text-xl">{o.title}</h3>
-                    <p className="mt-0.5 text-muted">{o.text}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <Link href="/kontakt" className="mt-7 inline-block font-bold underline underline-offset-4 hover:no-underline">
-              Większa grupa lub wydarzenie? Napisz do nas →
-            </Link>
-          </div>
+        {/* NA JAKĄ OKAZJĘ — lista z podmianą zdjęcia */}
+        <section className="wrap py-20 lg:py-24">
+          <Occasions items={OCCASIONS} />
+          <Link href="/kontakt" className="mt-8 inline-block font-bold underline underline-offset-4 hover:no-underline lg:ml-[calc(50%+2rem)]">
+            Większa grupa lub wydarzenie? Napisz do nas →
+          </Link>
         </section>
 
         {/* REZERWACJA */}
