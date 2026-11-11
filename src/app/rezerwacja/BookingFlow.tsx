@@ -526,11 +526,8 @@ function Flow() {
                 </label>
               </section>
 
-              {blocked && (
-                <div className="rounded-2xl bg-peach p-4 text-sm">
-                  Nie możemy dokończyć tej rezerwacji online. Prosimy o kontakt telefoniczny: <a href={CONFIG.phoneHref} className="font-semibold underline">{CONFIG.phone}</a>.
-                </div>
-              )}
+              {/* Czarna lista: rezerwacja po prostu się nie udaje — bez powodu i bez numeru telefonu */}
+              {blocked && <p className="text-sm font-semibold text-ember">Nie udało się dokończyć rezerwacji.</p>}
 
               <div className="flex items-center justify-between gap-4 pt-2">
                 <button type="button" onClick={() => setStep(1)} className="font-semibold text-muted hover:text-ink">

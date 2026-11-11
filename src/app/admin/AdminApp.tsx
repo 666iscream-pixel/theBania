@@ -708,7 +708,7 @@ function BlacklistView() {
   const [value, setValue] = useState("");
   const [note, setNote] = useState("");
   return (
-    <Page title="Czarna lista" sub="Gość z tej listy nie dokończy rezerwacji online — zobaczy neutralną prośbę o kontakt telefoniczny. Sprawdzamy numer telefonu, a jeśli gość go poda — także e-mail.">
+    <Page title="Czarna lista" sub="Gość z tej listy nie dokończy rezerwacji online — zobaczy tylko krótki komunikat, że się nie udało, bez podania powodu. Sprawdzamy numer telefonu, a jeśli gość go poda — także e-mail.">
       <div className="grid gap-2 rounded-2xl bg-paper p-4 ring-1 ring-line sm:grid-cols-[1fr_1fr_auto] sm:items-end">
         <TextField label="Telefon lub e-mail" value={value} onChange={setValue} placeholder="+48 600 000 000" />
         <TextField label="Notatka (widzi tylko obsługa)" value={note} onChange={setNote} placeholder="np. zniszczenia 12.10" />
