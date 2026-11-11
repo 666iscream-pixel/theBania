@@ -161,15 +161,7 @@ function Flow() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-        <h1 className="font-display text-5xl">Rezerwacja.</h1>
-        <p className="text-sm text-muted">
-          Zadatek {CONFIG.deposit} zł, reszta na miejscu ·{" "}
-          <Link href="/regulamin#rezerwacja" target="_blank" className="font-semibold text-ink underline underline-offset-2">
-            Zasady rezerwacji
-          </Link>
-        </p>
-      </div>
+      <h1 className="font-display text-5xl">Rezerwacja.</h1>
       <ol className="mt-6 flex gap-2 overflow-x-auto pb-1 text-sm">
         {STEPS.map((s, i) => (
           <li
@@ -500,13 +492,17 @@ function Flow() {
               </div>
             )}
           </div>
-          <p className="mt-4 px-2 text-xs text-muted">
-            Wolisz telefonicznie? <a href={CONFIG.phoneHref} className="underline">{CONFIG.phone}</a>
-          </p>
-          <p className="mt-1 px-2 text-xs text-muted">
-            <Link href="/regulamin#rezerwacja" target="_blank" className="underline">Zasady rezerwacji i zadatku</Link> ·{" "}
-            <Link href="/cennik" target="_blank" className="underline">Cennik</Link>
-          </p>
+          <div className="mt-4 rounded-[1.5rem] bg-paper p-5 ring-1 ring-line">
+            <p className="font-display text-lg">Dobrze wiedzieć.</p>
+            <ul className="mt-3 space-y-3 text-sm">
+              <Info icon="card" title={`Zadatek ${CONFIG.deposit} zł`} text="Płatny online przy rezerwacji, bezzwrotny." />
+              <Info icon="home" title="Reszta na miejscu" text="Płacisz w dniu wizyty." />
+              <Info icon="phone" title="Masz pytanie?" text={<a href={CONFIG.phoneHref} className="font-semibold text-ink underline underline-offset-2">{CONFIG.phone}</a>} />
+            </ul>
+            <Link href="/regulamin#rezerwacja" target="_blank" className="mt-4 flex items-center justify-between rounded-xl bg-peach px-4 py-2.5 text-sm font-bold transition hover:bg-sand hover:text-paper">
+              Zasady rezerwacji <span aria-hidden>→</span>
+            </Link>
+          </div>
         </aside>
       </div>
     </div>
@@ -555,6 +551,26 @@ function Calendar({ today, selected, onPick, availability }: { today: string; se
         })}
       </div>
     </div>
+  );
+}
+
+const ICONS = {
+  card: "M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11ZM3 9h18v2H3V9Zm3 6h4v1.5H6V15Z",
+  home: "M12 3 2.5 11h2.5v9h5.5v-6h3v6H19v-9h2.5L12 3Z",
+  phone: "M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8Z",
+};
+
+function Info({ icon, title, text }: { icon: keyof typeof ICONS; title: string; text: React.ReactNode }) {
+  return (
+    <li className="flex gap-3">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-peach">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden><path d={ICONS[icon]} fillRule="evenodd" /></svg>
+      </span>
+      <div>
+        <div className="font-bold">{title}</div>
+        <div className="text-muted">{text}</div>
+      </div>
+    </li>
   );
 }
 
