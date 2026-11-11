@@ -144,28 +144,44 @@ export default function Home() {
           </div>
         </section>
 
-        {/* FAQ + KONTAKT */}
-        <section className="wrap grid gap-5 py-20 md:grid-cols-2 lg:py-24">
-          <Link href="/regulamin#faq" className="group relative flex min-h-80 flex-col overflow-hidden rounded-[2rem] bg-sand p-8 sm:p-10">
-            <Dashes className="absolute right-6 top-6 w-20 text-paper/70" />
-            <p className="max-w-xs font-hand text-5xl leading-tight text-paper">Odpowiedzi na często zadawane pytania.</p>
-            <p className="mt-auto pt-6 font-bold text-paper">Regulamin i FAQ →</p>
-            <Art name="hot-guy" className="absolute bottom-4 right-6 h-44 opacity-90 invert transition group-hover:-rotate-3 sm:h-52" />
+        {/* FAQ — pasek */}
+        <section className="wrap pt-20 lg:pt-24">
+          <Link href="/regulamin#faq" className="group relative flex flex-col gap-4 overflow-hidden rounded-[2rem] bg-sand px-8 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-10">
+            <Dashes className="absolute right-[38%] top-4 hidden w-16 text-paper/60 sm:block" />
+            <p className="font-hand text-4xl leading-tight text-paper sm:text-5xl">Odpowiedzi na często zadawane pytania.</p>
+            <span className="relative shrink-0 self-start rounded-full bg-paper px-6 py-3 font-bold text-ink transition group-hover:bg-ink group-hover:text-peach sm:self-auto">
+              Regulamin i FAQ →
+            </span>
           </Link>
-          <div className="rounded-[2rem] bg-peach p-8 sm:p-10">
+        </section>
+
+        {/* KONTAKT — dane po lewej, duża mapa z wizytówką Google po prawej */}
+        <section className="wrap grid gap-5 py-20 lg:grid-cols-[1fr_1.7fr] lg:py-24">
+          <div className="flex flex-col rounded-[2rem] bg-peach p-8 sm:p-10">
             <h2 className="font-display text-4xl">Kontakt.</h2>
-            <p className="mt-4 text-lg">{CONFIG.address}</p>
-            <a href={CONFIG.phoneHref} className="mt-1 block text-lg font-bold">{CONFIG.phone}</a>
-            <p className="mt-1 text-muted">Codziennie 12:00–00:00, wyłącznie po rezerwacji.</p>
-            <div className="mt-5">
+            <dl className="mt-6 space-y-4 text-lg">
+              <div>
+                <dt className="font-hand text-2xl text-moss">Adres</dt>
+                <dd>{CONFIG.address}</dd>
+              </div>
+              <div>
+                <dt className="font-hand text-2xl text-moss">Telefon</dt>
+                <dd><a href={CONFIG.phoneHref} className="font-bold hover:underline">{CONFIG.phone}</a></dd>
+              </div>
+              <div>
+                <dt className="font-hand text-2xl text-moss">Godziny</dt>
+                <dd>Codziennie 12:00–00:00, wyłącznie po rezerwacji</dd>
+              </div>
+            </dl>
+            <div className="mt-auto pt-8">
               <Socials />
             </div>
-            <iframe
-              title="Mapa — The Bania Wrocław"
-              className="mt-6 h-52 w-full rounded-2xl border-0"
-              loading="lazy"
-              src="https://www.google.com/maps?q=Rakietowa+21,+54-615+Wroc%C5%82aw&output=embed"
-            />
+          </div>
+          <div className="overflow-hidden rounded-[2rem] bg-paper ring-1 ring-line">
+            <iframe title="The Bania na mapie Google" className="h-[360px] w-full border-0 lg:h-[460px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" src={CONFIG.mapEmbed} />
+            <a href={CONFIG.googleMaps} target="_blank" rel="noreferrer" className="flex items-center justify-between px-6 py-4 font-bold transition hover:bg-peach">
+              Opinie i dojazd w Google Maps <span aria-hidden>→</span>
+            </a>
           </div>
         </section>
       </main>

@@ -34,17 +34,12 @@ export default function Kontakt() {
               Zarezerwuj online
             </Link>
           </div>
-          <a href={CONFIG.googleMaps} target="_blank" rel="noreferrer" className="group relative block overflow-hidden rounded-[2rem]">
-            <iframe
-              title="Mapa — The Bania Wrocław"
-              className="pointer-events-none h-72 w-full border-0"
-              loading="lazy"
-              src="https://www.google.com/maps?q=Rakietowa+21,+54-615+Wroc%C5%82aw&output=embed"
-            />
-            <span className="absolute bottom-4 left-4 rounded-full bg-ink px-4 py-2 text-sm font-bold text-peach shadow-lg transition group-hover:bg-wood-dark">
-              Otwórz w Google Maps · opinie →
-            </span>
-          </a>
+          <div className="overflow-hidden rounded-[2rem] bg-paper ring-1 ring-line">
+            <iframe title="The Bania na mapie Google" className="h-80 w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" src={CONFIG.mapEmbed} />
+            <a href={CONFIG.googleMaps} target="_blank" rel="noreferrer" className="flex items-center justify-between px-5 py-4 font-bold transition hover:bg-peach">
+              Opinie i dojazd w Google Maps <span aria-hidden>→</span>
+            </a>
+          </div>
         </div>
         <ContactForm />
       </div>
