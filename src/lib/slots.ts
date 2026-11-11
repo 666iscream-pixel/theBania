@@ -106,8 +106,10 @@ export function daySlots(o: SlotOptions): Slot[] {
         });
         continue;
       }
-      if (o.keepEvening && load <= CONFIG.keepEvening.maxLoad && h < eveningFrom && blockEnd > eveningFrom) {
-        slots.push({ ...slot, ok: false, reason: "evening", detail: `Dzień jest mało obłożony — ostatnie ${CONFIG.keepEvening.hours} h trzymamy dla gości wieczornych.` });
+      // Prośba właściciela: przy pustym / mało obłożonym dniu ostatnie 3 h zostają wolne (nie sprzedajemy ich jako pierwszych).
+      // Zatrzymany wieczór działa jak kolejna rezerwacja o 21:00 — przed nim też nie zostawiamy martwych okien.
+      if (o.keepEvening && load <= CONFIG.keepEvening.maxLoad && (end > eveningFrom || !sellable(eveningFrom - blockEnd, true))) {
+        slots.push({ ...slot, ok: false, reason: "evening", detail: `Dzień jest jeszcze pusty — wieczór (ostatnie ${CONFIG.keepEvening.hours} h) otwieramy, gdy pojawią się inne rezerwacje.` });
         continue;
       }
     }

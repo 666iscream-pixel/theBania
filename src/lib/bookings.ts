@@ -85,8 +85,10 @@ export function mockBookingsFor(key: string, today = todayKey()): Booking[] {
       total: 0,
     });
   });
-  cache.set(cacheKey, out);
-  return out;
+  // Dane demo mają wyglądać jak prawdziwe po działaniu reguł: sam wieczór przy pustym dniu nie powstałby online.
+  const fixed = out.length === 1 && out[0].end > 21 ? [] : out;
+  cache.set(cacheKey, fixed);
+  return fixed;
 }
 
 export function rangeKeys(from: string, days: number) {
