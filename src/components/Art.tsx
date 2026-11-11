@@ -1,3 +1,4 @@
+import { asset } from "@/lib/asset";
 // Ryciny z postów The Bania (czarna kreska, przezroczyste tło).
 export type ArtName =
   | "bell" | "hat" | "herbs" | "hot-guy" | "hourglass" | "ladle" | "lady"
@@ -5,7 +6,7 @@ export type ArtName =
 
 export function Art({ name, className = "", alt = "" }: { name: ArtName; className?: string; alt?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={`/art/${name}.png`} alt={alt} aria-hidden={alt ? undefined : true} className={`select-none ${className}`} draggable={false} />;
+  return <img src={asset(`/art/${name}.png`)} alt={alt} aria-hidden={alt ? undefined : true} className={`select-none ${className}`} draggable={false} />;
 }
 
 // Zielone „kreski” i liście jak w relacjach Q&A

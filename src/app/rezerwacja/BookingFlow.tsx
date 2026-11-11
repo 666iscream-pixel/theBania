@@ -9,6 +9,7 @@ import { calcPrice, zl } from "@/lib/pricing";
 import { dayOpen, daySlots, findAlternatives, highSeasonFor, REASON_LABEL } from "@/lib/slots";
 import { useDemo } from "@/lib/store";
 import { DayTimeline } from "@/components/DayTimeline";
+import { asset } from "@/lib/asset";
 
 // 3 kroki: wybór godziny od razu przenosi dalej, dane i zadatek na jednym ekranie (TZ: 3–4 kliknięcia).
 const STEPS = ["Termin", "Goście i dodatki", "Dane i zadatek"];
@@ -378,7 +379,7 @@ function Flow() {
               <section className="rounded-3xl bg-paper p-6 ring-1 ring-line">
                 <div className="flex gap-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/img/tub-day.jpg" alt="" className="hidden h-24 w-24 rounded-2xl object-cover sm:block" />
+                  <img src={asset("/img/tub-day.jpg")} alt="" className="hidden h-24 w-24 rounded-2xl object-cover sm:block" />
                   <div className="flex-1">
                     <h2 className="text-lg font-semibold">Gorąca beczka</h2>
                     <p className="text-sm text-muted">40°C, 20 dysz do hydromasażu. {admin.tubPerHour} zł/h, minimum 2 h, od 3. godziny −50%.</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { asset } from "@/lib/asset";
 
 export type Occasion = { title: string; text: string; img: string };
 
@@ -14,7 +15,7 @@ export function Occasions({ items }: { items: Occasion[] }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={o.img}
-            src={`/img/${o.img}.jpg`}
+            src={asset(`/img/${o.img}.jpg`)}
             alt={o.title}
             loading="lazy"
             className={`absolute inset-0 h-full w-full object-cover transition duration-700 ${i === active ? "scale-100 opacity-100" : "scale-105 opacity-0"}`}

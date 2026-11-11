@@ -5,6 +5,8 @@ import { Dashes, PostTitle } from "@/components/Art";
 import { Socials } from "@/components/Socials";
 import { NextSlot } from "@/components/NextSlot";
 import { Occasions } from "@/components/Occasions";
+import { HeroBooking } from "@/components/HeroBooking";
+import { asset } from "@/lib/asset";
 import { CONFIG } from "@/lib/config";
 
 // Kolejność: pierwsze wrażenie → kim jesteśmy → co jest na miejscu → na jaką okazję → rezerwacja → zdjęcia → opinie → kontakt.
@@ -26,7 +28,7 @@ const VISIT: { img: string; title: string; text: string }[] = [
 const OCCASIONS = [
   { img: "tea-2", title: "Urodziny i święta", text: "Cały obiekt dla Was, grill w ogrodzie i stół na wspólną kolację." },
   { img: "tub-evening", title: "Wieczór z przyjaciółmi", text: "Para, gorąca beczka pod gołym niebem i nikt obcy obok." },
-  { img: "witki-back", title: "We dwoje", text: "Spokojny wieczór tylko dla Was dwojga — z ceremonią z witkami." },
+  { img: "citrus", title: "We dwoje", text: "Spokojny wieczór tylko dla Was dwojga — z ceremonią z witkami." },
   { img: "lounge", title: "Spotkanie firmowe", text: "Integracja dla zespołu do 12 osób. Szczegóły ustalimy indywidualnie." },
 ];
 
@@ -50,44 +52,49 @@ export default function Home() {
     <>
       <SiteHeader />
       <main className="overflow-x-clip">
-        {/* HERO — tekst i zdjęcie w jednym kontenerze, z oddechem; całość mieści się w pierwszym ekranie */}
+        {/* HERO — obietnica, formularz rezerwacji od razu, zdjęcie z ocenami Google */}
         <section className="bg-peach pb-10 lg:pb-12">
-          <div className="wrap grid gap-8 pt-6 lg:h-[calc(100svh-97px-3rem)] lg:max-h-[660px] lg:min-h-[440px] lg:grid-cols-[1.05fr_1fr] lg:grid-rows-1 lg:gap-12 lg:pt-8">
+          <div className="wrap grid gap-8 pt-6 lg:h-[calc(100svh-97px-3rem)] lg:max-h-[660px] lg:min-h-[460px] lg:grid-cols-[1.1fr_1fr] lg:grid-rows-1 lg:gap-12 lg:pt-8">
             <div className="order-2 self-center lg:order-1">
-              <p className="font-hand text-2xl text-moss">Wrocław · wynajem na wyłączność</p>
-              <h1 className="mt-1 font-display text-[2.6rem] leading-[1.03] sm:text-6xl xl:text-[4rem] lg:[@media(max-height:720px)]:text-5xl">Bania opalana drewnem.</h1>
-              <p className="mt-4 max-w-md text-lg text-muted">Łaźnia parowa, gorąca beczka i ogród — cały obiekt tylko dla Was. Do 12 osób, codziennie 12:00–00:00.</p>
+              <p className="font-hand text-2xl text-moss">Bania opalana drewnem · Wrocław</p>
+              <h1 className="mt-1 font-display text-[2.6rem] leading-[1.03] sm:text-6xl xl:text-[4rem] lg:[@media(max-height:720px)]:text-5xl">Cała bania tylko dla Was.</h1>
+              <p className="mt-4 max-w-lg text-lg text-muted">Prawdziwy piec na drewno, gorąca beczka i ogród. Do 12 osób, codziennie 12:00–00:00.</p>
 
-              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 lg:[@media(max-height:720px)]:mt-5">
-                <Link href="/rezerwacja" className="rounded-full bg-ember px-8 py-4 text-lg font-bold text-white shadow-lg shadow-ember/30 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">
-                  Zarezerwuj termin →
-                </Link>
-                <Link href="/cennik" className="font-bold underline underline-offset-4 hover:no-underline">
+              <div className="mt-7 max-w-xl lg:[@media(max-height:720px)]:mt-5">
+                <HeroBooking />
+              </div>
+              <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+                <NextSlot />
+                <Link href="/cennik" className="text-sm font-bold underline underline-offset-4 hover:no-underline">
                   od {CONFIG.prices.weekday} zł/h — cennik
                 </Link>
               </div>
-              <div className="mt-3">
-                <NextSlot />
-              </div>
-
-              <a href={CONFIG.googleMaps} target="_blank" rel="noreferrer" className="group mt-7 flex items-center gap-4 border-t-2 border-ink/10 pt-5 text-sm lg:[@media(max-height:720px)]:mt-5 lg:[@media(max-height:720px)]:pt-4">
-                <span className="whitespace-nowrap font-display text-3xl">
-                  {CONFIG.googleRating} <span className="text-2xl text-[#f2a33a]" aria-hidden>★</span>
-                </span>
-                <span className="text-muted group-hover:underline">
-                  <b className="block text-ink">{CONFIG.googleReviews} opinii w Google</b>
-                  {CONFIG.instagramFollowers} obserwujących na Instagramie
-                </span>
-              </a>
             </div>
             <div className="relative order-1 lg:order-2 lg:min-h-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/img/hero-steam.jpg"
-                alt="Łaźnia parowa z piecem opalanym drewnem"
+                src={asset("/img/witki-back.jpg")}
+                alt="Ceremonia z witkami dębowymi w The Bania"
                 fetchPriority="high"
                 className="aspect-[16/10] w-full rounded-[2rem] object-cover shadow-xl sm:aspect-[16/9] lg:absolute lg:inset-0 lg:aspect-auto lg:h-full lg:rounded-[2.5rem]"
               />
+              <a
+                href={CONFIG.googleMaps}
+                target="_blank"
+                rel="noreferrer"
+                className="absolute bottom-4 left-4 flex items-center gap-3 rounded-2xl bg-paper/95 px-4 py-2.5 shadow-lg backdrop-blur transition hover:bg-paper sm:bottom-6 sm:left-6"
+              >
+                <span className="whitespace-nowrap font-display text-2xl">
+                  {CONFIG.googleRating} <span className="text-[#f2a33a]" aria-hidden>★</span>
+                </span>
+                <span className="text-xs leading-tight text-muted">
+                  <b className="block text-sm text-ink">{CONFIG.googleReviews} opinii w Google</b>
+                  {CONFIG.instagramFollowers} obserwujących na IG
+                </span>
+              </a>
+              <span className="pointer-events-none absolute right-5 top-4 rotate-[-4deg] font-hand text-3xl text-paper drop-shadow-[0_2px_6px_rgba(0,0,0,.45)] sm:right-7 sm:top-6">
+                para · witki · spokój
+              </span>
             </div>
           </div>
         </section>
@@ -121,7 +128,7 @@ export default function Home() {
             </div>
             <div className="relative min-h-[320px] overflow-hidden rounded-[2.5rem] lg:min-h-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/img/witki-towel.jpg" alt="Gość z witkami przed wejściem do łaźni" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+              <img src={asset("/img/witki-towel.jpg")} alt="Gość z witkami przed wejściem do łaźni" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
             </div>
           </div>
         </section>
@@ -136,7 +143,7 @@ export default function Home() {
                 <article key={v.title} className="flex flex-col overflow-hidden rounded-[2rem] bg-paper">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={`/img/${v.img}.jpg`} alt="" loading="lazy" className="h-full w-full object-cover" />
+                    <img src={asset(`/img/${v.img}.jpg`)} alt="" loading="lazy" className="h-full w-full object-cover" />
                   </div>
                   <div className="flex-1 p-6">
                     <h3 className="font-display text-2xl">{v.title}</h3>
@@ -181,7 +188,7 @@ export default function Home() {
             </div>
             <div className="relative min-h-[320px] overflow-hidden rounded-[2rem] lg:min-h-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/img/relax.jpg" alt="Odpoczynek w strefie relaksu po bani" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+              <img src={asset("/img/relax.jpg")} alt="Odpoczynek w strefie relaksu po bani" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
             </div>
           </div>
         </section>
@@ -193,7 +200,7 @@ export default function Home() {
             {GALLERY.map((g, i) => (
               <Link key={g.src} href="/galeria" className={`group overflow-hidden rounded-[1.75rem] ${i === 0 ? "col-span-2 row-span-2" : ""}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/img/${g.src}.jpg`} alt={g.alt} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                <img src={asset(`/img/${g.src}.jpg`)} alt={g.alt} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
               </Link>
             ))}
           </div>
