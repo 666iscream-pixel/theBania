@@ -9,7 +9,7 @@ export function SiteFooter() {
     <footer className="mt-auto bg-ink text-cream">
       <div className="wrap grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
-          <Logo size={88} light />
+          <Logo size={112} light />
           <p className="mt-4 max-w-xs text-sm text-cream/70">Bania opalana drewnem, wynajem na wyłączność. Twoje miejsce na reset — tylko dla Ciebie i Twoich bliskich.</p>
         </div>
         <div className="text-sm">
