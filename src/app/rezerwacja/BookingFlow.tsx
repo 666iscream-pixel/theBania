@@ -161,7 +161,15 @@ function Flow() {
 
   return (
     <div>
-      <h1 className="font-display text-5xl">Rezerwacja.</h1>
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+        <h1 className="font-display text-5xl">Rezerwacja.</h1>
+        <p className="text-sm text-muted">
+          Zadatek {CONFIG.deposit} zł, reszta na miejscu ·{" "}
+          <Link href="/regulamin#rezerwacja" target="_blank" className="font-semibold text-ink underline underline-offset-2">
+            Zasady rezerwacji
+          </Link>
+        </p>
+      </div>
       <ol className="mt-6 flex gap-2 overflow-x-auto pb-1 text-sm">
         {STEPS.map((s, i) => (
           <li
@@ -494,6 +502,10 @@ function Flow() {
           </div>
           <p className="mt-4 px-2 text-xs text-muted">
             Wolisz telefonicznie? <a href={CONFIG.phoneHref} className="underline">{CONFIG.phone}</a>
+          </p>
+          <p className="mt-1 px-2 text-xs text-muted">
+            <Link href="/regulamin#rezerwacja" target="_blank" className="underline">Zasady rezerwacji i zadatku</Link> ·{" "}
+            <Link href="/cennik" target="_blank" className="underline">Cennik</Link>
           </p>
         </aside>
       </div>
