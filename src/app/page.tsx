@@ -9,10 +9,10 @@ import { CONFIG } from "@/lib/config";
 // Kolejność: pierwsze wrażenie → kim jesteśmy → co jest na miejscu → na jaką okazję → rezerwacja → zdjęcia → opinie → kontakt.
 
 const FACTS: { art: ArtName; title: string; text: string }[] = [
-  { art: "stove", title: "Piec na drewno", text: "Prawdziwa, miękka para — nie elektryczna sauna." },
-  { art: "window", title: "Na wyłączność", text: "Cały obiekt tylko dla Waszej grupy." },
+  { art: "window", title: "Na wyłączność", text: "Cały obiekt tylko dla Waszej grupy — bez obcych ludzi." },
   { art: "lady", title: "Do 12 osób", text: "Cena obejmuje 6 osób, większa grupa za dopłatą." },
-  { art: "tub", title: "Beczka 40°C", text: "20 dysz hydromasażu, a obok zimna beczka." },
+  { art: "hat", title: "Wszystko na miejscu", text: "Czapeczki, rękawiczki, kapcie, herbata, miód i owoce." },
+  { art: "hourglass", title: "Codziennie 12–24", text: "Minimum 2 godziny, od trzeciej każda o połowę taniej." },
 ];
 
 const VISIT: { img: string; art: ArtName; title: string; text: string }[] = [
@@ -22,11 +22,11 @@ const VISIT: { img: string; art: ArtName; title: string; text: string }[] = [
   { img: "tea", art: "teapot", title: "Strefa relaksu", text: "Herbata, miód i owoce przy stole, ogród z hamakiem i grill — bez obcych ludzi obok." },
 ];
 
-const OCCASIONS = [
-  { img: "tea-2", title: "Urodziny i święta", text: "Cały obiekt dla Was, grill w ogrodzie i stół na wspólną kolację." },
-  { img: "tub-evening", title: "Wieczór z przyjaciółmi", text: "Para, gorąca beczka pod gołym niebem i nikt obcy obok." },
-  { img: "citrus", title: "We dwoje", text: "Spokojny wieczór tylko dla Was dwojga — z ceremonią z witkami." },
-  { img: "lounge", title: "Spotkanie firmowe", text: "Integracja dla zespołu do 12 osób. Szczegóły ustalimy indywidualnie." },
+const OCCASIONS: { art: ArtName; title: string; text: string }[] = [
+  { art: "teapot", title: "Urodziny i święta", text: "Cały obiekt dla Was, grill w ogrodzie i stół na wspólną kolację." },
+  { art: "tub", title: "Wieczór z przyjaciółmi", text: "Para, gorąca beczka pod gołym niebem i nikt obcy obok." },
+  { art: "venik", title: "We dwoje", text: "Spokojny wieczór tylko dla Was dwojga — z ceremonią z witkami." },
+  { art: "window", title: "Spotkanie firmowe", text: "Integracja dla zespołu do 12 osób. Szczegóły ustalimy indywidualnie." },
 ];
 
 const STEPS = [
@@ -145,27 +145,29 @@ export default function Home() {
           </div>
         </section>
 
-        {/* NA JAKĄ OKAZJĘ */}
-        <section className="wrap py-20 lg:py-24">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="font-hand text-3xl text-moss">Dla kogo</p>
-              <h2 className="font-display text-4xl sm:text-5xl">Na każdą okazję.</h2>
-            </div>
-            <Link href="/kontakt" className="font-bold underline underline-offset-4 hover:no-underline">Większa grupa lub wydarzenie? Napisz do nas →</Link>
+        {/* NA JAKĄ OKAZJĘ — rozkładówka: duże zdjęcie + lista (inna forma niż karty powyżej) */}
+        <section className="wrap grid items-center gap-10 py-20 lg:grid-cols-2 lg:gap-16 lg:py-24">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] sm:aspect-[4/3] lg:aspect-[4/5]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/tub-evening.jpg" alt="Gorąca beczka wieczorem w ogrodzie" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
           </div>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {OCCASIONS.map((o) => (
-              <article key={o.title} className="group relative aspect-[3/4] overflow-hidden rounded-[2rem]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/img/${o.img}.jpg`} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-6 text-cream">
-                  <h3 className="font-display text-2xl">{o.title}</h3>
-                  <p className="mt-1 text-sm leading-snug text-cream/85">{o.text}</p>
-                </div>
-              </article>
-            ))}
+          <div>
+            <p className="font-hand text-3xl text-moss">Dla kogo</p>
+            <h2 className="font-display text-4xl sm:text-5xl">Na każdą okazję.</h2>
+            <ul className="mt-8 divide-y divide-line border-y border-line">
+              {OCCASIONS.map((o) => (
+                <li key={o.title} className="flex items-center gap-5 py-5">
+                  <Art name={o.art} className="h-14 w-14 shrink-0 object-contain" />
+                  <div>
+                    <h3 className="font-display text-xl">{o.title}</h3>
+                    <p className="mt-0.5 text-muted">{o.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <Link href="/kontakt" className="mt-7 inline-block font-bold underline underline-offset-4 hover:no-underline">
+              Większa grupa lub wydarzenie? Napisz do nas →
+            </Link>
           </div>
         </section>
 
