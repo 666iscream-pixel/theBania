@@ -21,13 +21,14 @@ export function todayKey(now = new Date()) {
   return toKey(now);
 }
 
-export function isWeekendRate(key: string) {
+// `holidays` — lista z panelu administratora; domyślnie wbudowane święta.
+export function isWeekendRate(key: string, holidays?: string[]) {
   const dow = fromKey(key).getDay(); // 0 nd, 5 pt, 6 sob
-  return dow === 0 || dow === 5 || dow === 6 || HOLIDAYS.has(key);
+  return dow === 0 || dow === 5 || dow === 6 || isHoliday(key, holidays);
 }
 
-export function isHoliday(key: string) {
-  return HOLIDAYS.has(key);
+export function isHoliday(key: string, holidays?: string[]) {
+  return holidays ? holidays.includes(key) : HOLIDAYS.has(key);
 }
 
 export function isHighSeason(key: string) {

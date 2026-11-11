@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageShell } from "@/components/PageShell";
-import { Socials } from "@/components/Socials";
+import { SocialCards } from "@/components/Socials";
 import { CONFIG } from "@/lib/config";
 import { ContactForm } from "./ContactForm";
 
@@ -32,8 +32,8 @@ export default function Kontakt() {
             Chcesz zarezerwować termin? Najszybciej <Link href="/rezerwacja" className="font-semibold text-ink underline underline-offset-2">online</Link>.
           </p>
           <div className="mt-8">
-            <p className="mb-3 font-hand text-2xl text-moss">Obserwuj nas</p>
-            <Socials />
+            <p className="mb-3 font-hand text-2xl text-moss">Znajdziesz nas też tu</p>
+            <SocialCards />
           </div>
         </div>
         <ContactForm />

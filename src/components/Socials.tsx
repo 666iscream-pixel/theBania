@@ -43,3 +43,33 @@ export function Socials({ tone = "dark", size = 44 }: { tone?: "dark" | "light";
     </ul>
   );
 }
+
+// Wersja z opisami — na stronę kontakt, gdzie same ikony wyglądają zbyt skromnie.
+export function SocialCards() {
+  const subs = [
+    `@the_bania_ · ${CONFIG.instagramFollowers} obserwujących`,
+    "The Bania Wrocław · aktualności",
+    `${CONFIG.googleRating} ★ · ${CONFIG.googleReviews} opinii — zostaw swoją`,
+  ];
+  const names = ["Instagram", "Facebook", "Google"];
+  return (
+    <ul className="divide-y divide-line overflow-hidden rounded-[1.5rem] bg-paper ring-1 ring-line">
+      {ITEMS.map((i, k) => (
+        <li key={i.label}>
+          <a href={i.href} target="_blank" rel="noreferrer" className="group flex items-center gap-4 px-5 py-4 transition hover:bg-peach/60">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink text-peach transition group-hover:bg-ember group-hover:text-white">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden>
+                <path d={i.path} />
+              </svg>
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-bold">{names[k]}</span>
+              <span className="block truncate text-sm text-muted">{subs[k]}</span>
+            </span>
+            <span className="text-lg transition group-hover:translate-x-1" aria-hidden>→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}

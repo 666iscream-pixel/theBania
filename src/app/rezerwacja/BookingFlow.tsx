@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ADDONS, BLACKLIST, CONFIG, type Promo } from "@/lib/config";
+import { ADDONS, CONFIG, type Promo } from "@/lib/config";
+import { activePromo, isBlacklisted, normalizePhone } from "@/lib/admin";
 import { DAYS_SHORT, fmtDate, fmtDateShort, fmtHour, isHoliday, isWeekendRate, monthName, pad, todayKey, toKey } from "@/lib/dates";
-import { calcPrice, findPromo, zl } from "@/lib/pricing";
+import { calcPrice, zl } from "@/lib/pricing";
 import { dayOpen, daySlots, findAlternatives, highSeasonFor, REASON_LABEL } from "@/lib/slots";
 import { useDemo } from "@/lib/store";
 import { DayTimeline } from "@/components/DayTimeline";
 
-const STEPS = ["Termin", "Goście i dodatki", "Twoje dane", "Zadatek"];
+// 3 kroki: wybór godziny od razu przenosi dalej, dane i zadatek na jednym ekranie (TZ: 3–4 kliknięcia).
+const STEPS = ["Termin", "Goście i dodatki", "Dane i zadatek"];
 const DURATIONS = [2, 3, 4, 5, 6, 8];
 
 export function BookingFlow() {
@@ -22,7 +24,7 @@ export function Loading() {
 }
 
 function Flow() {
-  const { settings, now, bookingsFor, addBooking } = useDemo();
+  const { settings, now, bookingsFor, addBooking, admin, setAdmin } = useDemo();
   const [step, setStep] = useState(0);
   // Flow renderuje się tylko po hydratacji, więc można bezpiecznie czytać adres (link „najbliższy wolny termin”).
   const [initial] = useState(() => {
@@ -36,12 +38,14 @@ function Flow() {
   const [start, setStart] = useState<number | null>(null);
   const [guests, setGuests] = useState(4);
   const [tubHours, setTubHours] = useState(0);
+  const [tubStart, setTubStart] = useState<number | null>(null);
   const [addons, setAddons] = useState<Record<string, number>>({});
   const [form, setForm] = useState({ name: "", phone: "", email: "", notes: "" });
+  const [phoneError, setPhoneError] = useState(false);
   const [consents, setConsents] = useState({ terms: false, marketing: false });
   const [promoInput, setPromoInput] = useState("");
   const [promo, setPromo] = useState<Promo | null>(null);
-  const [promoError, setPromoError] = useState(false);
+  const [promoPopup, setPromoPopup] = useState(false);
   const [holdUntil, setHoldUntil] = useState<number | null>(null);
   const [remaining, setRemaining] = useState(0);
   const [expired, setExpired] = useState(false);
@@ -63,7 +67,10 @@ function Flow() {
     [date, okSlots.length, duration, now, settings.season, settings.keepEvening, bookingsFor],
   );
 
-  const price = date ? calcPrice({ date, hours: duration, tubHours, guests, addons, promo }) : null;
+  const price = date ? calcPrice({ date, hours: duration, tubHours, guests, addons, promo }, admin) : null;
+  const addonPrice = (id: string, fallback: number | null) => (id in admin.addonPrices ? admin.addonPrices[id] : fallback);
+  const masterLocked = (addons["witki-dab"] || 0) < 2; // TZ: parmistrz tylko przy min. 2 witkach dębowych
+  const tubLabel = tubHours > 0 && tubStart !== null ? `${fmtHour(tubStart)}–${fmtHour(tubStart + tubHours)}` : "";
 
   // Blokada terminu na 5 minut po przejściu do danych.
   useEffect(() => {
@@ -88,13 +95,33 @@ function Flow() {
   function chooseDuration(d: number) {
     setDuration(d);
     setStart(null);
-    if (tubHours > d) setTubHours(d);
+    setTubHours(0);
+    setTubStart(null);
   }
 
   function pickDate(d: string) {
     setDate(d);
     setStart(null);
     setExpired(false);
+  }
+
+  // Wybór godziny od razu prowadzi dalej — mniej kliknięć na telefonie.
+  function pickStart(h: number) {
+    setStart(h);
+    setTubHours(0);
+    setTubStart(null);
+    setStep(1);
+  }
+
+  function chooseTub(h: number) {
+    setTubHours(h);
+    setTubStart(h === 0 || start === null ? null : start);
+  }
+
+  function changeAddon(id: string, v: number) {
+    const next = { ...addons, [id]: v };
+    if (id === "witki-dab" && v < 2) next.parmistrz = 0;
+    setAddons(next);
   }
 
   function goDetails() {
@@ -104,25 +131,32 @@ function Flow() {
     setStep(2);
   }
 
-  function submitDetails(e: React.FormEvent) {
+  function applyPromo() {
+    const p = activePromo(admin, promoInput);
+    setPromo(p);
+    if (!p && promoInput.trim() !== "") setPromoPopup(true);
+  }
+
+  function submit(e: React.FormEvent) {
     e.preventDefault();
-    const digits = form.phone.replace(/\D/g, "").replace(/^48(?=\d{9}$)/, "");
-    if (BLACKLIST.phones.includes(digits) || BLACKLIST.emails.includes(form.email.trim().toLowerCase())) {
+    const digits = normalizePhone(form.phone);
+    if (digits.length < 9 || digits.length > 12) {
+      setPhoneError(true);
+      return;
+    }
+    setPhoneError(false);
+    if (isBlacklisted(admin, form.phone, form.email)) {
       setBlocked(true);
       return;
     }
     setBlocked(false);
-    setStep(3);
-  }
-
-  function applyPromo() {
-    const p = findPromo(promoInput);
-    setPromo(p);
-    setPromoError(!p && promoInput.trim() !== "");
+    confirm();
   }
 
   function confirm() {
     if (!date || start === null || !price) return;
+    const extras = ADDONS.filter((a) => addons[a.id]).map((a) => `${a.name} × ${addons[a.id]}`);
+    if (tubLabel) extras.unshift(`Gorąca beczka ${tubLabel}`);
     addBooking({
       id: `www-${date}-${start}`,
       date,
@@ -134,26 +168,40 @@ function Flow() {
       phone: form.phone,
       guests,
       tubHours,
-      extras: ADDONS.filter((a) => addons[a.id]).map((a) => `${a.name} × ${addons[a.id]}`),
+      extras,
       total: price.total,
     });
+    if (promo) setAdmin({ usedPromos: [...admin.usedPromos, { code: promo.code, date: todayKey(now) }] });
     setDone(true);
     setHoldUntil(null);
   }
 
   if (done && date && start !== null && price) {
+    const sms = admin.templates.confirm
+      .replace("{data}", fmtDateShort(date))
+      .replace("{godziny}", `${fmtHour(start)}–${fmtHour(start + duration)}`)
+      .replace("{mapa}", CONFIG.googleMaps)
+      .replace("{zadatek}", String(price.deposit));
     return (
       <div className="mx-auto max-w-2xl py-10 text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-moss text-3xl text-cream">✓</div>
-        <h1 className="mt-6 font-display text-5xl font-semibold">Rezerwacja potwierdzona</h1>
-        <p className="mt-4 text-lg text-muted">
+        <h1 className="mt-6 font-display text-5xl">Dziękujemy za rezerwację!</h1>
+        <p className="mt-4 text-lg text-muted first-letter:uppercase">
           {fmtDate(date)}, {fmtHour(start)}–{fmtHour(start + duration)} · {guests} {guests === 1 ? "osoba" : guests < 5 ? "osoby" : "osób"}
         </p>
         <div className="mx-auto mt-8 max-w-md space-y-2 rounded-3xl bg-paper p-6 text-left text-sm ring-1 ring-line">
           <Row l="Zapłacono (zadatek)" r={zl(price.deposit)} />
           <Row l="Do zapłaty na miejscu" r={zl(price.rest + price.onSite)} />
+          {tubLabel && <Row l="Gorąca beczka" r={tubLabel} />}
+          <div className="border-t border-line pt-3">
+            <div className="font-semibold">{CONFIG.address}</div>
+            <a href={CONFIG.googleMaps} target="_blank" rel="noreferrer" className="font-semibold text-wood underline underline-offset-2">
+              Jak dojechać — Google Maps →
+            </a>
+          </div>
           <div className="border-t border-line pt-3 text-muted">
-            📱 SMS i ✉️ e-mail z potwierdzeniem zostały wysłane. Przypomnienie przyjdzie 24 h przed wizytą.
+            <p className="mb-1 font-semibold text-ink">Wysłaliśmy SMS{form.email ? " i e-mail" : ""}:</p>
+            <p className="rounded-xl bg-cream p-3 text-xs">{sms}</p>
           </div>
         </div>
         <p className="mt-6 text-sm text-muted">
@@ -241,13 +289,13 @@ function Flow() {
 
                   {okSlots.length > 0 ? (
                     <>
-                      <h3 className="mt-6 text-sm font-semibold">Dostępne godziny rozpoczęcia ({duration} h)</h3>
+                      <h3 className="mt-6 text-sm font-semibold">Wybierz godzinę ({duration} h)</h3>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {(settings.showHidden ? slots : okSlots).map((s) =>
                           s.ok ? (
                             <button
                               key={s.start}
-                              onClick={() => setStart(s.start)}
+                              onClick={() => pickStart(s.start)}
                               className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${start === s.start ? "bg-ember text-cream" : "bg-cream ring-1 ring-line hover:ring-ember"}`}
                             >
                               {fmtHour(s.start)}–{fmtHour(s.end)}
@@ -298,11 +346,11 @@ function Flow() {
                 </section>
               )}
 
-              <NavButtons onNext={() => setStep(1)} nextDisabled={start === null} />
+              {start !== null && <NavButtons onNext={() => setStep(1)} />}
             </div>
           )}
 
-          {step === 1 && (
+          {step === 1 && start !== null && (
             <div className="space-y-6">
               <section className="rounded-3xl bg-paper p-6 ring-1 ring-line">
                 <h2 className="text-lg font-semibold">Liczba gości</h2>
@@ -326,21 +374,39 @@ function Flow() {
               <section className="rounded-3xl bg-paper p-6 ring-1 ring-line">
                 <div className="flex gap-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/img/tub-night.jpg" alt="" className="hidden h-24 w-24 rounded-2xl object-cover sm:block" />
+                  <img src="/img/tub-day.jpg" alt="" className="hidden h-24 w-24 rounded-2xl object-cover sm:block" />
                   <div className="flex-1">
-                    <h2 className="text-lg font-semibold">Balia — gorąca beczka</h2>
-                    <p className="text-sm text-muted">40°C, 20 dysz do hydromasażu. {CONFIG.prices.tubPerHour} zł/h, minimum 2 h, od 3. godziny −50%.</p>
+                    <h2 className="text-lg font-semibold">Gorąca beczka</h2>
+                    <p className="text-sm text-muted">40°C, 20 dysz do hydromasażu. {admin.tubPerHour} zł/h, minimum 2 h, od 3. godziny −50%.</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {[0, ...Array.from({ length: Math.max(0, duration - 1) }, (_, i) => i + 2)].map((h) => (
                         <button
                           key={h}
-                          onClick={() => setTubHours(h)}
+                          onClick={() => chooseTub(h)}
                           className={`rounded-full px-4 py-2 text-sm font-semibold ${tubHours === h ? "bg-ink text-cream" : "bg-cream ring-1 ring-line"}`}
                         >
-                          {h === 0 ? "Bez balii" : `${h} h`}
+                          {h === 0 ? "Bez beczki" : `${h} h`}
                         </button>
                       ))}
                     </div>
+                    {tubHours > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm font-semibold">
+                          W których godzinach? <span className="font-normal text-muted">(w ramach rezerwacji {fmtHour(start)}–{fmtHour(start + duration)})</span>
+                        </p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {Array.from({ length: duration - tubHours + 1 }, (_, i) => start + i).map((t) => (
+                            <button
+                              key={t}
+                              onClick={() => setTubStart(t)}
+                              className={`rounded-xl px-3 py-2 text-sm font-semibold ${tubStart === t ? "bg-ember text-cream" : "bg-cream ring-1 ring-line hover:ring-ember"}`}
+                            >
+                              {fmtHour(t)}–{fmtHour(t + tubHours)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </section>
@@ -348,33 +414,56 @@ function Flow() {
               <section className="rounded-3xl bg-paper p-6 ring-1 ring-line">
                 <h2 className="text-lg font-semibold">Dodatki</h2>
                 <div className="mt-4 divide-y divide-line">
-                  {ADDONS.map((a) => (
-                    <div key={a.id} className="flex items-center justify-between gap-4 py-3">
-                      <div>
-                        <div className="font-medium">{a.name}</div>
-                        <div className="text-sm text-muted">{a.price === null ? "" : `${a.price} zł / ${a.unit}`}{a.hint ? `${a.price === null ? "" : " · "}${a.hint}` : ""}</div>
+                  {ADDONS.map((a) => {
+                    const p = addonPrice(a.id, a.price);
+                    const locked = a.id === "parmistrz" && masterLocked;
+                    return (
+                      <div key={a.id} className={`flex items-center justify-between gap-4 py-3 ${locked ? "opacity-60" : ""}`}>
+                        <div>
+                          <div className="font-medium">{a.name}</div>
+                          <div className="text-sm text-muted">
+                            {p === null ? "cena do ustalenia" : `${p} zł / ${a.unit}`}
+                            {a.hint ? ` · ${a.hint.replace(" · cena do ustalenia", "")}` : ""}
+                          </div>
+                          {locked && <div className="mt-1 text-xs font-semibold text-ember">Dostępne po dodaniu min. 2 witek dębowych</div>}
+                        </div>
+                        <Stepper
+                          value={addons[a.id] || 0}
+                          max={locked ? 0 : (a.max ?? (a.id === "parmistrz" ? guests : 10))}
+                          disabled={locked}
+                          onChange={(v) => changeAddon(a.id, v)}
+                        />
                       </div>
-                      <Stepper
-                        value={addons[a.id] || 0}
-                        max={a.max ?? (a.id === "parmistrz" ? guests : 10)}
-                        onChange={(v) => setAddons({ ...addons, [a.id]: v })}
-                      />
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
-                
               </section>
 
-              <NavButtons onBack={() => setStep(0)} onNext={goDetails} nextLabel="Przejdź do danych" />
+              <NavButtons onBack={() => setStep(0)} onNext={goDetails} nextLabel="Dalej" nextDisabled={tubHours > 0 && tubStart === null} />
             </div>
           )}
 
-          {step === 2 && (
-            <form onSubmit={submitDetails} className="space-y-6">
+          {step === 2 && price && (
+            <form onSubmit={submit} className="space-y-6">
               <section className="grid gap-4 rounded-3xl bg-paper p-6 ring-1 ring-line sm:grid-cols-2">
-                <Input label="Imię i nazwisko" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
-                <Input label="Telefon" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} required pattern="[+0-9 ]{9,}" placeholder="+48 600 000 000" />
-                <Input label="E-mail" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
+                <Input label="Imię *" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required autoComplete="name" />
+                <div>
+                  <Input
+                    label="Telefon *"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    value={form.phone}
+                    onChange={(v) => {
+                      setForm({ ...form, phone: v });
+                      setPhoneError(false);
+                    }}
+                    required
+                    placeholder="+48 600 000 000"
+                  />
+                  {phoneError && <p className="mt-1 text-xs font-semibold text-ember">Podaj poprawny numer telefonu (9 cyfr, opcjonalnie z +48).</p>}
+                </div>
+                <Input label="E-mail (opcjonalnie)" type="email" autoComplete="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
                 <Input label="Uwagi (opcjonalnie)" value={form.notes} onChange={(v) => setForm({ ...form, notes: v })} />
               </section>
 
@@ -391,9 +480,33 @@ function Flow() {
                     Zastosuj
                   </button>
                 </div>
-                {promo && <p className="mt-2 text-sm font-semibold text-moss">✓ {promo.label}</p>}
-                {promoError && <p className="mt-2 text-sm text-ember">Kod jest nieprawidłowy lub został już wykorzystany.</p>}
+                {promo && <p className="mt-2 text-sm font-semibold text-moss">✓ {promo.label} — suma przeliczona</p>}
               </section>
+
+              {price.deposit > 0 && (
+                <section className="rounded-3xl bg-paper p-6 ring-1 ring-line">
+                  <h2 className="font-semibold">Zadatek {zl(price.deposit)} — metoda płatności</h2>
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    {([
+                      ["blik", "BLIK"],
+                      ["p24", "Przelewy24"],
+                      ["card", "Karta"],
+                    ] as const).map(([v, l]) => (
+                      <button
+                        type="button"
+                        key={v}
+                        onClick={() => setPay(v)}
+                        className={`rounded-2xl py-4 font-semibold ${pay === v ? "bg-ink text-cream" : "bg-cream ring-1 ring-line"}`}
+                      >
+                        {l}
+                      </button>
+                    ))}
+                  </div>
+                  {pay === "blik" && (
+                    <input inputMode="numeric" maxLength={6} placeholder="Kod BLIK — 6 cyfr" className="mt-3 w-full rounded-xl border border-line bg-cream px-3 py-3 text-center font-mono text-xl tracking-[0.4em]" />
+                  )}
+                </section>
+              )}
 
               <section className="space-y-3 text-sm">
                 <label className="flex gap-3">
@@ -414,48 +527,16 @@ function Flow() {
                 </div>
               )}
 
-              <NavButtons onBack={() => setStep(1)} nextLabel="Przejdź do zadatku" submit />
+              <div className="flex items-center justify-between gap-4 pt-2">
+                <button type="button" onClick={() => setStep(1)} className="font-semibold text-muted hover:text-ink">
+                  ← Wstecz
+                </button>
+                <button className="rounded-full bg-ember px-8 py-3.5 font-bold text-white shadow-lg shadow-ember/25 transition hover:bg-[#c71f1a]">
+                  {price.deposit === 0 ? "Potwierdź rezerwację" : `Zapłać ${zl(price.deposit)}`}
+                </button>
+              </div>
+              <p className="text-right text-xs text-muted">Demo — płatność nie zostanie pobrana. W pełnej wersji: Stripe / Przelewy24.</p>
             </form>
-          )}
-
-          {step === 3 && price && (
-            <div className="space-y-6">
-              {price.deposit === 0 ? (
-                <section className="rounded-3xl bg-paper p-6 ring-1 ring-line">
-                  <h2 className="text-lg font-semibold">Bon pokrywa całą rezerwację</h2>
-                  <p className="mt-1 text-sm text-muted">Zadatek nie jest wymagany. Po potwierdzeniu bon zostanie wykorzystany i przestanie działać.</p>
-                  <button onClick={confirm} className="mt-5 w-full rounded-full bg-ember py-3.5 font-semibold text-cream">Potwierdź rezerwację</button>
-                </section>
-              ) : (
-                <section className="rounded-3xl bg-paper p-6 ring-1 ring-line">
-                  <h2 className="text-lg font-semibold">Zadatek {zl(price.deposit)}</h2>
-                  <p className="mt-1 text-sm text-muted">Bezzwrotny. Pozostałą kwotę zapłacisz na miejscu.</p>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                    {([
-                      ["blik", "BLIK"],
-                      ["p24", "Przelewy24"],
-                      ["card", "Karta"],
-                    ] as const).map(([v, l]) => (
-                      <button
-                        key={v}
-                        onClick={() => setPay(v)}
-                        className={`rounded-2xl py-5 text-lg font-semibold ${pay === v ? "bg-ink text-cream" : "bg-cream ring-1 ring-line"}`}
-                      >
-                        {l}
-                      </button>
-                    ))}
-                  </div>
-                  {pay === "blik" && (
-                    <input inputMode="numeric" maxLength={6} placeholder="Kod BLIK — 6 cyfr" className="mt-4 w-full rounded-xl border border-line bg-cream px-3 py-3 text-center font-mono text-xl tracking-[0.4em]" />
-                  )}
-                  <button onClick={confirm} className="mt-5 w-full rounded-full bg-ember py-3.5 font-semibold text-cream">
-                    Zapłać {zl(price.deposit)}
-                  </button>
-                  <p className="mt-3 text-center text-xs text-muted">Demo — płatność nie zostanie pobrana. W pełnej wersji: Stripe / Przelewy24.</p>
-                </section>
-              )}
-              <NavButtons onBack={() => setStep(2)} />
-            </div>
           )}
         </div>
 
@@ -472,13 +553,14 @@ function Flow() {
                     {start !== null ? `${fmtHour(start)}–${fmtHour(start + duration)}` : "godzina —"} · {duration} h · {guests} os.
                   </div>
                   <div className="mt-1 text-xs text-peach">
-                    {isHoliday(date) ? "Święto — taryfa weekendowa" : isWeekendRate(date) ? "Taryfa weekendowa" : "Taryfa Pn–Czw"} · {price?.rate} zł/h
+                    {isHoliday(date, admin.holidays) ? "Święto — taryfa weekendowa" : isWeekendRate(date, admin.holidays) ? "Taryfa weekendowa" : "Taryfa Pn–Czw"} · {price?.rate} zł/h
                   </div>
                 </div>
                 <div className="space-y-2 border-t border-cream/15 pt-3">
                   {price?.lines.map((l) => (
                     <div key={l.label}>
                       <Row l={l.label} r={zl(l.amount)} />
+                      {l.label.startsWith("Gorąca beczka") && tubLabel && <div className="text-xs text-cream/50">{tubLabel}</div>}
                       {l.detail && <div className="text-xs text-cream/50">{l.detail}</div>}
                     </div>
                   ))}
@@ -502,9 +584,17 @@ function Flow() {
           <div className="mt-4 rounded-[1.5rem] bg-paper p-5 ring-1 ring-line">
             <p className="font-display text-lg">Dobrze wiedzieć.</p>
             <ul className="mt-3 space-y-3 text-sm">
-              <Info icon="card" title={`Zadatek ${CONFIG.deposit} zł`} text="Płatny online przy rezerwacji, bezzwrotny." />
+              <Info icon="card" title={`Zadatek ${admin.deposit} zł`} text="Płatny online przy rezerwacji, bezzwrotny." />
               <Info icon="home" title="Reszta na miejscu" text="Płacisz w dniu wizyty." />
-              <Info icon="help" title="Masz pytanie?" text={<Link href="/regulamin#faq" target="_blank" className="font-semibold text-ink underline underline-offset-2">Odpowiedzi w FAQ</Link>} />
+              <Info
+                icon="help"
+                title="Masz pytanie?"
+                text={
+                  <Link href="/regulamin#faq" target="_blank" className="font-semibold text-ink underline underline-offset-2">
+                    Odpowiedzi w FAQ
+                  </Link>
+                }
+              />
             </ul>
             <Link href="/regulamin#rezerwacja" target="_blank" className="mt-4 flex items-center justify-between rounded-xl bg-peach px-4 py-2.5 text-sm font-bold transition hover:bg-sand hover:text-paper">
               Zasady rezerwacji <span aria-hidden>→</span>
@@ -512,6 +602,19 @@ function Flow() {
           </div>
         </aside>
       </div>
+
+      {promoPopup && (
+        <div role="alertdialog" aria-modal="true" aria-labelledby="promo-title" className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4" onClick={() => setPromoPopup(false)}>
+          <div className="w-full max-w-sm rounded-[1.75rem] bg-paper p-7 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-ember/10 text-2xl font-bold text-ember">!</div>
+            <h2 id="promo-title" className="mt-4 font-display text-2xl">Promokod nie jest aktywny</h2>
+            <p className="mt-2 text-sm text-muted">Sprawdź, czy kod jest wpisany poprawnie. Każdy kod działa tylko raz.</p>
+            <button autoFocus onClick={() => setPromoPopup(false)} className="mt-6 w-full rounded-full bg-ink py-3 font-bold text-peach">
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -565,14 +668,15 @@ const ICONS = {
   card: "M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11ZM3 9h18v2H3V9Zm3 6h4v1.5H6V15Z",
   home: "M12 3 2.5 11h2.5v9h5.5v-6h3v6H19v-9h2.5L12 3Z",
   help: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-2h2v2Zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.4-2.1 1.2-2.8l1.2-1.3c.4-.4.6-.9.6-1.4a2 2 0 0 0-4 0H8a4 4 0 0 1 8 0c0 .9-.4 1.7-.9 2.3Z",
-  phone: "M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8Z",
 };
 
 function Info({ icon, title, text }: { icon: keyof typeof ICONS; title: string; text: React.ReactNode }) {
   return (
     <li className="flex gap-3">
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-peach">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden><path d={ICONS[icon]} fillRule="evenodd" /></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden>
+          <path d={ICONS[icon]} fillRule="evenodd" />
+        </svg>
       </span>
       <div>
         <div className="font-bold">{title}</div>
@@ -588,9 +692,9 @@ function plTerms(n: number) {
   return `${n} ${few ? "terminy" : "terminów"}`;
 }
 
-function Stepper({ value, max, onChange }: { value: number; max: number; onChange: (v: number) => void }) {
+function Stepper({ value, max, onChange, disabled }: { value: number; max: number; onChange: (v: number) => void; disabled?: boolean }) {
   return (
-    <div className="flex items-center gap-1 rounded-full bg-cream ring-1 ring-line">
+    <div className={`flex items-center gap-1 rounded-full bg-cream ring-1 ring-line ${disabled ? "pointer-events-none" : ""}`} aria-disabled={disabled}>
       <button type="button" onClick={() => onChange(Math.max(0, value - 1))} className="h-9 w-9 text-lg" aria-label="Mniej">−</button>
       <span className="w-5 text-center font-semibold tabular-nums">{value}</span>
       <button type="button" onClick={() => onChange(Math.min(max, value + 1))} className="h-9 w-9 text-lg" aria-label="Więcej">+</button>
@@ -607,13 +711,13 @@ function Input({ label, value, onChange, ...rest }: { label: string; value: stri
   );
 }
 
-function NavButtons({ onBack, onNext, nextDisabled, nextLabel = "Dalej", submit }: { onBack?: () => void; onNext?: () => void; nextDisabled?: boolean; nextLabel?: string; submit?: boolean }) {
+function NavButtons({ onBack, onNext, nextDisabled, nextLabel = "Dalej" }: { onBack?: () => void; onNext?: () => void; nextDisabled?: boolean; nextLabel?: string }) {
   return (
     <div className="flex items-center justify-between pt-2">
       {onBack ? <button type="button" onClick={onBack} className="font-semibold text-muted hover:text-ink">← Wstecz</button> : <span />}
-      {(onNext || submit) && (
+      {onNext && (
         <button
-          type={submit ? "submit" : "button"}
+          type="button"
           onClick={onNext}
           disabled={nextDisabled}
           className="rounded-full bg-ink px-7 py-3 font-semibold text-cream transition hover:bg-wood-dark disabled:opacity-30"

@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { mockBookingsFor, type Booking } from "./bookings";
 import type { SeasonMode } from "./slots";
+import { ADMIN_DEFAULTS, type AdminSettings } from "./admin";
 
 export type DemoSettings = {
   season: SeasonMode;
@@ -22,19 +23,22 @@ type Store = {
   addBooking: (b: Booking) => void;
   updateBooking: (id: string, patch: Partial<Booking>) => void;
   removeBooking: (id: string) => void;
+  admin: AdminSettings;
+  setAdmin: (patch: Partial<AdminSettings>) => void;
   reset: () => void;
 };
 
 const Ctx = createContext<Store | null>(null);
 const KEY = "bania-demo-v1";
 
-type Persisted = { settings: DemoSettings; added: Booking[]; patched: Record<string, Partial<Booking>>; removed: string[] };
+type Persisted = { settings: DemoSettings; added: Booking[]; patched: Record<string, Partial<Booking>>; removed: string[]; admin?: Partial<AdminSettings> };
 
 export function DemoProvider({ children }: { children: React.ReactNode }) {
   const [settings, setS] = useState<DemoSettings>(DEFAULTS);
   const [added, setAdded] = useState<Booking[]>([]);
   const [patched, setPatched] = useState<Record<string, Partial<Booking>>>({});
   const [removed, setRemoved] = useState<string[]>([]);
+  const [admin, setAdminState] = useState<AdminSettings>(ADMIN_DEFAULTS);
   const [loaded, setLoaded] = useState(false);
   const [tick, setTick] = useState(0); // 0 = jeszcze przed hydratacją
 
@@ -49,6 +53,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         setAdded(p.added || []);
         setPatched(p.patched || {});
         setRemoved(p.removed || []);
+        setAdminState({ ...ADMIN_DEFAULTS, ...p.admin });
       }
     } catch {}
     setLoaded(true);
@@ -61,9 +66,9 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem(KEY, JSON.stringify({ settings, added, patched, removed } satisfies Persisted));
+      localStorage.setItem(KEY, JSON.stringify({ settings, added, patched, removed, admin } satisfies Persisted));
     } catch {}
-  }, [settings, added, patched, removed, loaded]);
+  }, [settings, added, patched, removed, admin, loaded]);
 
   const now = useMemo(() => {
     const d = new Date(tick);
@@ -94,8 +99,11 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       setAdded((prev) => prev.filter((b) => b.id !== id));
       setRemoved((prev) => [...prev, id]);
     },
+    admin,
+    setAdmin: (patch) => setAdminState((prev) => ({ ...prev, ...patch })),
     reset: () => {
       setS(DEFAULTS);
+      setAdminState(ADMIN_DEFAULTS);
       setAdded([]);
       setPatched({});
       setRemoved([]);
