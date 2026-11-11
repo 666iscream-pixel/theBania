@@ -67,7 +67,7 @@ export function SiteHeader() {
               </button>
             ))}
           </div>
-          <Link href="/rezerwacja" className="rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-peach shadow-sm transition hover:bg-wood-dark">
+          <Link href="/rezerwacja" className="hidden rounded-full bg-ink px-5 py-2.5 lg:inline-block text-sm font-bold text-peach shadow-sm transition hover:bg-wood-dark">
             Zarezerwuj
           </Link>
           <button className="-mr-1 p-1 lg:hidden" onClick={() => setOpen(!open)} aria-label={open ? "Zamknij menu" : "Otwórz menu"} aria-expanded={open}>

@@ -103,22 +103,23 @@ export default function Home() {
           </div>
         </section>
 
-        {/* REZERWACJA */}
-        <section className="wrap grid items-center gap-10 py-20 lg:grid-cols-[1fr_1.2fr] lg:py-24">
-          <div>
+        {/* REZERWACJA — kroki po lewej w kolumnie, nagłówek i przyciski po prawej */}
+        <section className="wrap grid items-center gap-10 py-20 lg:grid-cols-[1fr_1fr] lg:gap-16 lg:py-24">
+          <div className="lg:order-2">
             <PostTitle art="bell" title="Rezerwacja." sub="Bez dzwonienia — wolne terminy widzisz od razu, o każdej porze." />
             <div className="mt-7 flex flex-wrap gap-3">
               <Link href="/rezerwacja" className="rounded-full bg-ink px-7 py-3.5 font-bold text-peach transition hover:bg-wood-dark">Sprawdź wolne terminy</Link>
               <a href={CONFIG.phoneHref} className="rounded-full border-2 border-ink px-6 py-3 font-bold">{CONFIG.phone}</a>
             </div>
           </div>
-          <ol className="grid gap-3 sm:grid-cols-2">
+          <ol className="relative lg:order-1">
+            <span className="absolute bottom-6 left-[19px] top-6 w-0.5 bg-ink/15" aria-hidden />
             {STEPS.map((s, i) => (
-              <li key={s.t} className="flex gap-4 rounded-[1.5rem] bg-paper p-5 ring-1 ring-line">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink text-sm font-bold text-peach">{i + 1}</span>
-                <div>
-                  <div className="font-bold leading-snug">{s.t}</div>
-                  <p className="mt-1 text-sm text-muted">{s.d}</p>
+              <li key={s.t} className="relative flex gap-5 pb-7 last:pb-0">
+                <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink font-bold text-peach">{i + 1}</span>
+                <div className="pt-1.5">
+                  <div className="text-lg font-bold leading-snug">{s.t}</div>
+                  <p className="mt-1 text-muted">{s.d}</p>
                 </div>
               </li>
             ))}
@@ -127,10 +128,7 @@ export default function Home() {
 
         {/* GALERIA — bento */}
         <section className="wrap">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-4xl sm:text-5xl">Zajrzyj do środka.</h2>
-            <Link href="/galeria" className="font-bold underline underline-offset-4">Cała galeria →</Link>
-          </div>
+          <h2 className="font-display text-4xl sm:text-5xl">Zajrzyj do środka.</h2>
           <div className="mt-8 grid auto-rows-[160px] grid-cols-2 gap-3 sm:auto-rows-[220px] md:grid-cols-4 lg:gap-4">
             {GALLERY.map((g, i) => (
               <Link key={g.src} href="/galeria" className={`group overflow-hidden rounded-[1.75rem] ${i === 0 ? "col-span-2 row-span-2" : ""}`}>
@@ -138,6 +136,11 @@ export default function Home() {
                 <img src={`/img/${g.src}.jpg`} alt={g.alt} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
               </Link>
             ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link href="/galeria" className="inline-block rounded-full border-2 border-ink px-7 py-3 font-bold transition hover:bg-ink hover:text-peach">
+              Cała galeria →
+            </Link>
           </div>
         </section>
 
