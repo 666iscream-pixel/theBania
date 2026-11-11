@@ -10,10 +10,10 @@ import { CONFIG } from "@/lib/config";
 // Kolejność: pierwsze wrażenie → kim jesteśmy → co jest na miejscu → na jaką okazję → rezerwacja → zdjęcia → opinie → kontakt.
 
 const FACTS = [
-  { value: "Tylko Wy", label: "cały obiekt na wyłączność" },
-  { value: "do 12", label: "osób w jednej grupie" },
-  { value: "40°C", label: "gorąca beczka, 20 dysz" },
-  { value: "12–24", label: "codziennie, od 2 godzin" },
+  { title: "Na wyłączność", text: "cały obiekt tylko dla Waszej grupy" },
+  { title: "Do 12 osób", text: "cena obejmuje 6, większa grupa za dopłatą" },
+  { title: "Gorąca beczka 40°C", text: "20 dysz, obok zimna beczka" },
+  { title: "Codziennie 12–24", text: "minimum 2 godziny" },
 ];
 
 const VISIT: { img: string; title: string; text: string }[] = [
@@ -92,9 +92,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* WSTĘP — tekst + zdjęcie miejsca tej samej wysokości, pod spodem pas faktów */}
+        {/* WSTĘP — tekst z krótką listą faktów + pionowe zdjęcie tej samej wysokości */}
         <section id="o-nas" className="wrap scroll-mt-24 py-20 lg:py-28">
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+          <div className="grid gap-10 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
             <div>
               <p className="font-hand text-3xl text-moss">O nas</p>
               <h2 className="font-display text-4xl leading-tight sm:text-5xl">Witamy w The Bania.</h2>
@@ -109,21 +109,21 @@ export default function Home() {
                   Herbata, kawa, miód i owoce czekają na stole, czapeczki, rękawiczki i kapcie też. Wystarczy, że przyjdziecie z ręcznikiem — resztą zajmiemy się my.
                 </p>
               </div>
+              <dl className="mt-8 grid gap-x-8 border-t border-line sm:grid-cols-2">
+                {FACTS.map((f) => (
+                  <div key={f.title} className="border-b border-line py-3">
+                    <dt className="font-bold">{f.title}</dt>
+                    <dd className="text-sm text-muted">{f.text}</dd>
+                  </div>
+                ))}
+              </dl>
               <Link href="/cennik" className="mt-7 inline-block font-bold underline underline-offset-4 hover:no-underline">Co dokładnie jest w cenie →</Link>
             </div>
             <div className="relative min-h-[320px] overflow-hidden rounded-[2.5rem] lg:min-h-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/img/exterior.jpg" alt="Budynek bani z tarasem i ogrodem" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+              <img src="/img/witki-towel.jpg" alt="Gość z witkami przed wejściem do łaźni" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
             </div>
           </div>
-          <dl className="mt-12 grid grid-cols-2 divide-ink/10 rounded-[2rem] bg-peach md:grid-cols-4 md:divide-x">
-            {FACTS.map((f) => (
-              <div key={f.value} className="px-6 py-7 text-center">
-                <dt className="font-display text-3xl text-ember sm:text-4xl">{f.value}</dt>
-                <dd className="mt-1 text-sm text-muted">{f.label}</dd>
-              </div>
-            ))}
-          </dl>
         </section>
 
         {/* JAK WYGLĄDA WIZYTA */}
