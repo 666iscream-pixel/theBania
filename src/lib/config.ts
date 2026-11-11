@@ -28,6 +28,10 @@ export const CONFIG = {
   instagram: "https://www.instagram.com/the_bania_/",
   facebook: "https://www.facebook.com/thebaniawro",
   googleMaps: "https://maps.app.goo.gl/w3BnjgbU5LdwLYu48",
+  // Na stronie startowej jako dowód społeczny. W pełnej wersji — pobierane z Google Places API.
+  googleRating: "4,8",
+  googleReviews: 60,
+  instagramFollowers: "6 tys.",
   // Osadzenie wizytówki Google (nazwa, ocena, liczba opinii), a nie samego adresu
   mapEmbed:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2505.0!2d16.9363247!3d51.0986454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470fc1216855bca5%3A0x97b7271198682370!2sThe%20Bania!5e0!3m2!1spl!2spl!4v1700000000000!5m2!1spl!2spl",
