@@ -277,19 +277,22 @@ function Flow() {
 
               {date && (
                 <section className="rounded-3xl bg-paper p-5 ring-1 ring-line sm:p-6">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h2 className="text-lg font-semibold first-letter:uppercase">{fmtDate(date)}</h2>
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${highSeasonFor(date, settings.season) ? "bg-ink text-cream" : "bg-peach"}`}>
-                      {highSeasonFor(date, settings.season) ? "Sezon wysoki — godziny bez martwych okien" : "Sezon niski — każda wolna godzina"}
-                    </span>
-                  </div>
-                  <div className="mt-5">
-                    <DayTimeline bookings={bookingsFor(date)} selected={start !== null ? { start, end: start + duration } : null} />
-                  </div>
+                  <h2 className="text-lg font-semibold first-letter:uppercase">{fmtDate(date)}</h2>
+                  {/* Logika (sezon, oś dnia ze sprzątaniem) — tylko w trybie prezentacji, gościa by myliła */}
+                  {settings.showHidden && (
+                    <div className="mt-4 rounded-2xl border border-dashed border-line p-4">
+                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${highSeasonFor(date, settings.season) ? "bg-ink text-cream" : "bg-peach"}`}>
+                        {highSeasonFor(date, settings.season) ? "Sezon wysoki — godziny bez martwych okien" : "Sezon niski — każda wolna godzina"}
+                      </span>
+                      <div className="mt-4">
+                        <DayTimeline bookings={bookingsFor(date)} selected={start !== null ? { start, end: start + duration } : null} />
+                      </div>
+                    </div>
+                  )}
 
                   {okSlots.length > 0 ? (
                     <>
-                      <h3 className="mt-6 text-sm font-semibold">Wybierz godzinę ({duration} h)</h3>
+                      <h3 className="mt-4 text-sm font-semibold">Wybierz godzinę ({duration} h)</h3>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {(settings.showHidden ? slots : okSlots).map((s) =>
                           s.ok ? (

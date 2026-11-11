@@ -41,8 +41,8 @@ export function DemoPanel() {
             onChange={(v) => setSettings({ keepEvening: v })}
           />
           <Toggle
-            label="Pokaż ukryte godziny"
-            hint="Gość ich nie widzi — tu widać, dlaczego zostały ukryte"
+            label="Pokaż logikę rezerwacji"
+            hint="Sezon, oś dnia ze sprzątaniem i ukryte godziny z powodem. Gość tego nie widzi."
             value={settings.showHidden}
             onChange={(v) => setSettings({ showHidden: v })}
           />
