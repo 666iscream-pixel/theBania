@@ -69,7 +69,7 @@ function AdminInner() {
 
   return (
     <div className="flex min-h-screen bg-[#f6efe7] text-ink">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-line bg-paper p-5 md:flex">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto border-r border-line bg-paper p-5 md:flex">
         <div className="flex items-center gap-3">
           <Logo size={48} />
           <div>
@@ -77,7 +77,11 @@ function AdminInner() {
             <div className="text-xs text-muted">The Bania · demo</div>
           </div>
         </div>
-        <nav className="mt-8 space-y-1 text-sm">
+        <div className="mt-5">
+          <div className="mb-1.5 text-xs uppercase tracking-wider text-muted">Zalogowany jako</div>
+          <RoleSwitch role={role} onChange={switchRole} />
+        </div>
+        <nav className="mt-6 space-y-1 border-t border-line pt-5 text-sm">
           {menu.map((m) => (
             <button
               key={m.id}
@@ -89,9 +93,7 @@ function AdminInner() {
           ))}
           {role === "manager" && <p className="px-3 pt-3 text-xs text-muted">🔒 Ustawienia, ceny i kody dostępne po wpisaniu PIN-u właściciela.</p>}
         </nav>
-        <div className="mt-auto space-y-3 pt-8">
-          <div className="text-xs uppercase tracking-wider text-muted">Zalogowany jako</div>
-          <RoleSwitch role={role} onChange={switchRole} />
+        <div className="mt-auto pt-8">
           <Link href="/" className="block text-xs text-muted underline">← Strona główna</Link>
         </div>
       </aside>
