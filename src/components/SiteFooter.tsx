@@ -35,7 +35,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-cream/10">
-        <div className="wrap flex flex-wrap justify-between gap-2 py-5 text-xs text-cream/50">
+        <div className="wrap flex flex-wrap justify-between gap-2 pb-24 pt-5 text-xs text-cream/50 lg:pb-5">
           <span>© 2026 The Bania Wrocław</span>
           <span>Polityka prywatności · Regulamin rezerwacji</span>
         </div>

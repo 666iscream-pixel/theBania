@@ -20,7 +20,7 @@ export default function Kontakt() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card icon="pin" label="Adres" value={CONFIG.address} action={{ href: CONFIG.googleMaps, text: "Wyznacz trasę", external: true }} />
         <Card icon="phone" label="Telefon" value={CONFIG.phone} action={{ href: CONFIG.phoneHref, text: "Zadzwoń" }} />
-        <Card icon="clock" label="Godziny" value="Codziennie 12:00–00:00" note="Wyłącznie po rezerwacji" action={{ href: "/rezerwacja", text: "Sprawdź wolne terminy" }} />
+        <Card icon="clock" label="Godziny" value="Codziennie 12:00–00:00" note="Wyłącznie po rezerwacji" action={{ href: "/rezerwacja", text: "Zarezerwuj termin" }} />
       </div>
 
       {/* 2. Wiadomość */}

@@ -56,7 +56,7 @@ export default function Home() {
 
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <Link href="/rezerwacja" className="rounded-full bg-ember px-8 py-4 text-lg font-bold text-white shadow-lg shadow-ember/30 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">
-                  Sprawdź wolne terminy →
+                  Zarezerwuj termin →
                 </Link>
                 <Link href="/cennik" className="font-bold underline underline-offset-4 hover:no-underline">
                   od {CONFIG.prices.weekday} zł/h — cennik
@@ -123,7 +123,7 @@ export default function Home() {
                 ))}
               </ol>
               <div className="mt-9 flex flex-wrap items-center gap-3">
-                <Link href="/rezerwacja" className="rounded-full bg-ember px-7 py-4 font-bold text-white shadow-lg shadow-ember/25 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">Sprawdź wolne terminy →</Link>
+                <Link href="/rezerwacja" className="rounded-full bg-ember px-7 py-4 font-bold text-white shadow-lg shadow-ember/25 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">Zarezerwuj termin →</Link>
                 <a href={CONFIG.phoneHref} className="px-2 font-semibold underline underline-offset-4">lub zadzwoń: {CONFIG.phone}</a>
               </div>
             </div>

@@ -128,7 +128,7 @@ export default function Cennik() {
             <h2 className="font-display text-xl">Zadatek {CONFIG.deposit} zł.</h2>
             <p className="mt-2 text-sm text-cream/75">Wpłacasz przy rezerwacji, resztę na miejscu. Zadatek jest bezzwrotny.</p>
             <Link href="/rezerwacja" className="mt-5 block rounded-full bg-peach py-3 text-center font-bold text-ink transition hover:bg-cream">
-              Sprawdź wolne terminy
+              Zarezerwuj termin
             </Link>
             <Link href="/regulamin#rezerwacja" className="mt-3 block text-center text-sm text-cream/70 underline underline-offset-2 hover:text-cream">
               Zasady rezerwacji
