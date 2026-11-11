@@ -107,31 +107,37 @@ export default function Home() {
           </div>
         </section>
 
-        {/* REZERWACJA — kroki po lewej w kolumnie, nagłówek i przyciski po prawej */}
-        <section className="wrap grid items-center gap-10 py-20 lg:grid-cols-[1fr_1fr] lg:gap-16 lg:py-24">
-          <div className="lg:order-2">
-            <PostTitle art="bell" title="Rezerwacja." sub="Bez dzwonienia — wolne terminy widzisz od razu, o każdej porze." />
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/rezerwacja" className="rounded-full bg-ember px-7 py-3.5 font-bold text-white shadow-lg shadow-ember/25 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">Sprawdź wolne terminy →</Link>
-              <a href={CONFIG.phoneHref} className="rounded-full border-2 border-ink px-6 py-3 font-bold">{CONFIG.phone}</a>
+        {/* REZERWACJA — osobny pas: tekst i kroki w jednej kolumnie, zdjęcie tej samej wysokości obok */}
+        <section className="bg-peach py-20 lg:py-24">
+          <div className="wrap grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
+            <div>
+              <PostTitle art="bell" title="Rezerwacja." sub="Bez dzwonienia — wolne terminy widzisz od razu, o każdej porze." />
+              <ol className="relative mt-10">
+                <span className="absolute bottom-5 left-[19px] top-5 w-0.5 bg-ink/15" aria-hidden />
+                {STEPS.map((s, i) => (
+                  <li key={s.t} className="relative flex gap-5 pb-6 last:pb-0">
+                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink font-bold text-peach">{i + 1}</span>
+                    <div className="pt-1.5">
+                      <div className="text-lg font-bold leading-snug">{s.t}</div>
+                      <p className="mt-0.5 text-muted">{s.d}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <div className="mt-9 flex flex-wrap items-center gap-3">
+                <Link href="/rezerwacja" className="rounded-full bg-ember px-7 py-4 font-bold text-white shadow-lg shadow-ember/25 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">Sprawdź wolne terminy →</Link>
+                <a href={CONFIG.phoneHref} className="px-2 font-semibold underline underline-offset-4">lub zadzwoń: {CONFIG.phone}</a>
+              </div>
+            </div>
+            <div className="relative min-h-[320px] overflow-hidden rounded-[2rem] lg:min-h-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/img/relax.jpg" alt="Odpoczynek w strefie relaksu po bani" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
             </div>
           </div>
-          <ol className="relative lg:order-1">
-            <span className="absolute bottom-6 left-[19px] top-6 w-0.5 bg-ink/15" aria-hidden />
-            {STEPS.map((s, i) => (
-              <li key={s.t} className="relative flex gap-5 pb-7 last:pb-0">
-                <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink font-bold text-peach">{i + 1}</span>
-                <div className="pt-1.5">
-                  <div className="text-lg font-bold leading-snug">{s.t}</div>
-                  <p className="mt-1 text-muted">{s.d}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
         </section>
 
         {/* GALERIA — bento */}
-        <section className="wrap">
+        <section className="wrap pt-20 lg:pt-24">
           <h2 className="font-display text-4xl sm:text-5xl">Zajrzyj do środka.</h2>
           <div className="mt-8 grid auto-rows-[160px] grid-cols-2 gap-3 sm:auto-rows-[220px] md:grid-cols-4 lg:gap-4">
             {GALLERY.map((g, i) => (
