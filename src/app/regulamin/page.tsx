@@ -145,7 +145,7 @@ function Section({ id, art, title, children }: { id: string; art: ArtName; title
 
 function Rules({ items }: { items: string[] }) {
   return (
-    <ol className="grid gap-x-8 gap-y-3 rounded-[1.5rem] bg-paper p-5 ring-1 ring-line sm:p-7 md:grid-cols-2">
+    <ol className="space-y-3 rounded-[1.5rem] bg-paper p-5 ring-1 ring-line sm:p-7">
       {items.map((r, i) => (
         <li key={r} className="flex gap-3">
           <span className="w-6 shrink-0 pt-px text-right font-display text-lg text-sand">{i + 1}.</span>
