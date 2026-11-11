@@ -58,10 +58,6 @@ const FAQ: { q: string; a: React.ReactNode }[] = [
   { q: "Czy jest strefa do grillowania?", a: "Tak. Korzystanie z grilla we własnym zakresie jest bezpłatne, a na życzenie rozpalimy grill i zapewnimy węgiel (40 zł)." },
   { q: "Czy gorącą beczkę można zarezerwować osobno?", a: "Nie, beczka jest dodatkiem do rezerwacji bani — minimum 2 godziny." },
   {
-    q: "Dlaczego w kalendarzu nie widzę niektórych godzin?",
-    a: "W sezonie (wrzesień–marzec) układamy rezerwacje tak, by między nimi nie zostawały krótkie okna, których nikt nie może zarezerwować. Dzięki temu więcej gości znajduje wolny termin.",
-  },
-  {
     q: "Ile kosztuje wizyta?",
     a: (
       <>
