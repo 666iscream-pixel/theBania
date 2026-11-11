@@ -37,9 +37,9 @@ function blocksOf(bookings: Booking[]) {
 }
 
 // Czy w wolny kawałek o długości `len` zmieści się jeszcze jeden gość.
-// Przed kolejną rezerwacją potrzebne jest też sprzątanie; na koniec dnia — nie.
+// Przed kolejną rezerwacją: min. rezerwacja + sprzątanie. Na koniec dnia: próg z konfiguracji (TZ — 3 h).
 function sellable(len: number, beforeBooking: boolean) {
-  return len === 0 || len >= MIN + (beforeBooking ? BUF : 0);
+  return len === 0 || len >= (beforeBooking ? MIN + BUF : CONFIG.minTailHours);
 }
 
 export function daySlots(o: SlotOptions): Slot[] {

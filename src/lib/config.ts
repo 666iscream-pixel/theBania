@@ -4,6 +4,9 @@ export const CONFIG = {
   closeHour: 24,
   minHours: 2,
   bufferHours: 1, // sprzątanie / przygotowanie między rezerwacjami
+  // Najkrótszy „sprzedawalny” kawałek na koniec dnia. TZ: 3 h (np. 18–21 odpada, bo 22–00 to martwe okno).
+  // Na rozmowie padło też 2 h — wtedy wystarczy zmienić na 2.
+  minTailHours: 3,
   leadColdHours: 2.5, // tego dnia nie było rezerwacji: dojazd 0,5 h + rozpalenie 2 h
   leadWarmHours: 1.5, // tego dnia była już rezerwacja — piec rozgrzany
   highSeasonMonths: [9, 10, 11, 12, 1, 2, 3],
