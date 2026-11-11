@@ -49,19 +49,10 @@ export default function Home() {
     <>
       <SiteHeader />
       <main className="overflow-x-clip">
-        {/* HERO — mieści się w pierwszym ekranie: tekst po lewej, zdjęcie po prawej na całą wysokość */}
-        <section className="relative bg-peach">
-          <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-[46%]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/img/hero-steam.jpg"
-              alt="Łaźnia parowa z piecem opalanym drewnem"
-              fetchPriority="high"
-              className="aspect-[16/10] w-full object-cover sm:aspect-[16/9] lg:aspect-auto lg:h-full lg:rounded-bl-[3rem]"
-            />
-          </div>
-          <div className="wrap relative">
-            <div className="py-9 lg:flex lg:h-[calc(100svh-97px)] lg:max-h-[680px] lg:min-h-[500px] lg:w-[52%] lg:flex-col lg:justify-center lg:py-8 lg:pr-10">
+        {/* HERO — tekst i zdjęcie w jednym kontenerze, z oddechem; całość mieści się w pierwszym ekranie */}
+        <section className="bg-peach">
+          <div className="wrap grid gap-8 py-6 lg:h-[calc(100svh-97px)] lg:max-h-[700px] lg:min-h-[520px] lg:grid-cols-[1.05fr_1fr] lg:grid-rows-1 lg:gap-12 lg:py-8">
+            <div className="order-2 self-center lg:order-1">
               <p className="font-hand text-2xl text-moss">Wrocław · wynajem na wyłączność</p>
               <h1 className="mt-1 font-display text-[2.6rem] leading-[1.03] sm:text-6xl xl:text-[4rem]">Bania opalana drewnem.</h1>
               <p className="mt-4 max-w-md text-lg text-muted">Łaźnia parowa, gorąca beczka i ogród — cały obiekt tylko dla Was. Do 12 osób, codziennie 12:00–00:00.</p>
@@ -87,6 +78,15 @@ export default function Home() {
                   {CONFIG.instagramFollowers} obserwujących na Instagramie
                 </span>
               </a>
+            </div>
+            <div className="relative order-1 lg:order-2 lg:min-h-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/img/hero-steam.jpg"
+                alt="Łaźnia parowa z piecem opalanym drewnem"
+                fetchPriority="high"
+                className="aspect-[16/10] w-full rounded-[2rem] object-cover shadow-xl sm:aspect-[16/9] lg:absolute lg:inset-0 lg:aspect-auto lg:h-full lg:rounded-[2.5rem]"
+              />
             </div>
           </div>
         </section>
