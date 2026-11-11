@@ -6,7 +6,14 @@ import { Socials } from "@/components/Socials";
 import { NextSlot } from "@/components/NextSlot";
 import { CONFIG } from "@/lib/config";
 
-// Strona prowadzi: wrażenie (hero) → wyobrażenie wizyty → jak zarezerwować → zdjęcia i zaufanie → kontakt.
+// Kolejność: pierwsze wrażenie → kim jesteśmy → jak wygląda wizyta → na jaką okazję → rezerwacja → zdjęcia → opinie → kontakt.
+
+const FACTS: { art: ArtName; title: string; text: string }[] = [
+  { art: "stove", title: "Piec na drewno", text: "Prawdziwa, miękka para — nie elektryczna sauna." },
+  { art: "window", title: "Na wyłączność", text: "Cały obiekt tylko dla Waszej grupy." },
+  { art: "lady", title: "Do 12 osób", text: "Cena obejmuje 6 osób, większa grupa za dopłatą." },
+  { art: "tub", title: "Beczka 40°C", text: "20 dysz hydromasażu, a obok zimna beczka." },
+];
 
 const VISIT: { img: string; art: ArtName; title: string; text: string }[] = [
   { img: "steam-room-2", art: "stove", title: "Rozgrzewka.", text: "Piec opalany drewnem daje miękką, głęboką parę. Wchodzicie, ile chcecie — bania jest tylko Wasza." },
@@ -15,18 +22,25 @@ const VISIT: { img: string; art: ArtName; title: string; text: string }[] = [
   { img: "tea", art: "teapot", title: "Relaks.", text: "Herbata, miód i owoce w strefie wypoczynku. Ogród z hamakiem i grill — bez obcych ludzi obok." },
 ];
 
+const OCCASIONS = [
+  { img: "tea-2", title: "Urodziny i święta", text: "Cały obiekt dla Was, grill w ogrodzie i stół na wspólną kolację." },
+  { img: "tub-evening", title: "Wieczór z przyjaciółmi", text: "Para, gorąca beczka pod gołym niebem i nikt obcy obok." },
+  { img: "citrus", title: "We dwoje", text: "Spokojny wieczór tylko dla Was dwojga — z ceremonią z witkami." },
+  { img: "lounge", title: "Spotkanie firmowe", text: "Integracja dla zespołu do 12 osób. Szczegóły ustalimy indywidualnie." },
+];
+
 const STEPS = [
-  { t: "Wybierz dzień i liczbę godzin", d: "Kalendarz pokaże tylko naprawdę wolne terminy." },
+  { t: "Wybierz dzień i godzinę", d: "Kalendarz pokaże tylko naprawdę wolne terminy." },
   { t: "Dodaj beczkę, witki, grill", d: "Cenę ze wszystkimi zniżkami liczymy od razu." },
   { t: "Wpłać zadatek 200 zł", d: "BLIK, Przelewy24 lub karta — termin jest Wasz." },
-  { t: "Dostaniesz SMS i e-mail", d: "Potwierdzenie od razu, przypomnienie dzień przed." },
+  { t: "Dostaniesz SMS z potwierdzeniem", d: "Z adresem i mapą, a dzień przed — przypomnienie." },
 ];
 
 const GALLERY = [
   { src: "exterior", alt: "Budynek bani z ogrodem" },
-  { src: "lounge", alt: "Strefa relaksu" },
+  { src: "steam-light", alt: "Łaźnia parowa w promieniach światła" },
   { src: "tub-day", alt: "Gorąca beczka" },
-  { src: "citrus", alt: "Napar z cytrusów do bani" },
+  { src: "witki-back", alt: "Ceremonia z witkami" },
   { src: "garden-hammock", alt: "Ogród z hamakiem" },
 ];
 
@@ -35,26 +49,24 @@ export default function Home() {
     <>
       <SiteHeader />
       <main className="overflow-x-clip">
-        {/* HERO — tekst po lewej, duże zdjęcie po prawej do krawędzi ekranu */}
+        {/* HERO — mieści się w pierwszym ekranie: tekst po lewej, zdjęcie po prawej na całą wysokość */}
         <section className="relative bg-peach">
-          <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-[48%]">
+          <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-[46%]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/img/steam-light.jpg"
-              alt="Łaźnia parowa w promieniach światła"
+              src="/img/hero-steam.jpg"
+              alt="Łaźnia parowa z piecem opalanym drewnem"
               fetchPriority="high"
               className="aspect-[16/10] w-full object-cover sm:aspect-[16/9] lg:aspect-auto lg:h-full lg:rounded-bl-[3rem]"
             />
           </div>
           <div className="wrap relative">
-            <div className="py-10 lg:flex lg:min-h-[min(calc(100svh-105px),760px)] lg:w-[50%] lg:flex-col lg:justify-center lg:py-16 lg:pr-12">
-              <p className="font-hand text-2xl text-moss sm:text-3xl">Wynajem na wyłączność · Wrocław</p>
-              <h1 className="mt-2 font-display text-[2.75rem] leading-[1.02] sm:text-6xl xl:text-[4rem]">
-                Bania opalana drewnem. Tylko dla Was.
-              </h1>
-              <p className="mt-5 max-w-md text-lg text-muted">Para, witki i gorąca beczka — cały obiekt dla Ciebie i bliskich, do 12 osób.</p>
+            <div className="py-9 lg:flex lg:h-[calc(100svh-97px)] lg:max-h-[680px] lg:min-h-[500px] lg:w-[52%] lg:flex-col lg:justify-center lg:py-8 lg:pr-10">
+              <p className="font-hand text-2xl text-moss">Wrocław · wynajem na wyłączność</p>
+              <h1 className="mt-1 font-display text-[2.6rem] leading-[1.03] sm:text-6xl xl:text-[4rem]">Bania opalana drewnem.</h1>
+              <p className="mt-4 max-w-md text-lg text-muted">Łaźnia parowa, gorąca beczka i ogród — cały obiekt tylko dla Was. Do 12 osób, codziennie 12:00–00:00.</p>
 
-              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <Link href="/rezerwacja" className="rounded-full bg-ember px-8 py-4 text-lg font-bold text-white shadow-lg shadow-ember/30 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">
                   Zarezerwuj termin →
                 </Link>
@@ -62,50 +74,101 @@ export default function Home() {
                   od {CONFIG.prices.weekday} zł/h — cennik
                 </Link>
               </div>
-              <div className="mt-4">
+              <div className="mt-3">
                 <NextSlot />
               </div>
 
-              <a href={CONFIG.googleMaps} target="_blank" rel="noreferrer" className="group mt-10 flex items-center gap-4 border-t-2 border-ink/10 pt-6">
-                <span className="whitespace-nowrap font-display text-4xl">
-                  {CONFIG.googleRating} <span className="text-3xl text-[#f2a33a]" aria-hidden>★</span>
+              <a href={CONFIG.googleMaps} target="_blank" rel="noreferrer" className="group mt-7 flex items-center gap-4 border-t-2 border-ink/10 pt-5 text-sm">
+                <span className="whitespace-nowrap font-display text-3xl">
+                  {CONFIG.googleRating} <span className="text-2xl text-[#f2a33a]" aria-hidden>★</span>
                 </span>
-                <span className="text-sm text-muted">
-                  <b className="block text-lg text-ink">Google</b>
-                  <span className="group-hover:underline">{CONFIG.googleReviews} opinii</span>
-                </span>
-                <span className="mx-2 h-10 w-px bg-ink/15" aria-hidden />
-                <span className="text-sm text-muted">
-                  <b className="block text-lg text-ink">{CONFIG.instagramFollowers}</b>obserwujących na Instagramie
+                <span className="text-muted group-hover:underline">
+                  <b className="block text-ink">{CONFIG.googleReviews} opinii w Google</b>
+                  {CONFIG.instagramFollowers} obserwujących na Instagramie
                 </span>
               </a>
             </div>
           </div>
         </section>
 
-        {/* JAK WYGLĄDA WIZYTA — zdjęcie + rycina z Instagrama */}
-        <section id="o-nas" className="wrap scroll-mt-24 py-20 lg:py-28">
-          <p className="font-hand text-3xl text-moss">Jak wygląda wizyta</p>
-          <h2 className="max-w-2xl font-display text-4xl leading-tight sm:text-5xl">Kilka godzin, po których naprawdę odpoczniesz.</h2>
+        {/* WSTĘP — kim jesteśmy */}
+        <section id="o-nas" className="wrap grid scroll-mt-24 gap-12 py-20 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:py-28">
+          <div>
+            <p className="font-hand text-3xl text-moss">O nas</p>
+            <h2 className="font-display text-4xl leading-tight sm:text-5xl">Witamy w The Bania.</h2>
+            <div className="mt-6 space-y-4 text-lg leading-relaxed text-muted">
+              <p>
+                To miejsce, w którym naprawdę zwalniasz. Piec opalany drewnem, miękka para i zapach witek — a obok tylko ludzie, z którymi chcesz spędzić ten czas.
+              </p>
+              <p>
+                Wynajmujecie cały obiekt: łaźnię parową, gorącą beczkę z hydromasażem, strefę relaksu i ogród z hamakiem. Nikt obcy nie wejdzie i nikt nie będzie Was poganiał.
+              </p>
+              <p>
+                Herbata, kawa, miód i owoce czekają na stole, czapeczki, rękawiczki i kapcie też. Wystarczy, że przyjdziecie z ręcznikiem — resztą zajmiemy się my.
+              </p>
+            </div>
+            <Link href="/cennik" className="mt-7 inline-block font-bold underline underline-offset-4 hover:no-underline">Co dokładnie jest w cenie →</Link>
+          </div>
+          <div className="grid content-start gap-4 sm:grid-cols-2">
+            {FACTS.map((f) => (
+              <div key={f.title} className="rounded-[1.75rem] bg-peach p-6">
+                <Art name={f.art} className="h-20 w-auto" />
+                <h3 className="mt-3 font-display text-xl">{f.title}</h3>
+                <p className="mt-1 text-sm leading-snug text-muted">{f.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* JAK WYGLĄDA WIZYTA */}
+        <section className="bg-peach py-20 lg:py-24">
+          <div className="wrap">
+            <p className="font-hand text-3xl text-moss">Jak wygląda wizyta</p>
+            <h2 className="max-w-2xl font-display text-4xl leading-tight sm:text-5xl">Kilka godzin, po których naprawdę odpoczniesz.</h2>
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {VISIT.map((v, i) => (
+                <article key={v.title} className="flex flex-col overflow-hidden rounded-[2rem] bg-paper">
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={`/img/${v.img}.jpg`} alt="" loading="lazy" className="h-full w-full object-cover" />
+                    <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-paper font-bold">{i + 1}</span>
+                  </div>
+                  <div className="relative flex-1 p-6">
+                    <Art name={v.art} className="pointer-events-none absolute -top-10 right-4 h-20 w-16 object-contain" />
+                    <h3 className="font-display text-2xl">{v.title}</h3>
+                    <p className="mt-2 leading-snug text-muted">{v.text}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* NA JAKĄ OKAZJĘ */}
+        <section className="wrap py-20 lg:py-24">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="font-hand text-3xl text-moss">Dla kogo</p>
+              <h2 className="font-display text-4xl sm:text-5xl">Na każdą okazję.</h2>
+            </div>
+            <Link href="/kontakt" className="font-bold underline underline-offset-4 hover:no-underline">Większa grupa lub wydarzenie? Napisz do nas →</Link>
+          </div>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {VISIT.map((v, i) => (
-              <article key={v.title} className="flex flex-col overflow-hidden rounded-[2rem] bg-peach">
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/img/${v.img}.jpg`} alt="" loading="lazy" className="h-full w-full object-cover" />
-                  <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-peach font-bold">{i + 1}</span>
-                </div>
-                <div className="relative flex-1 p-6">
-                  <Art name={v.art} className="pointer-events-none absolute -top-10 right-4 h-20 w-16 object-contain" />
-                  <h3 className="font-display text-2xl">{v.title}</h3>
-                  <p className="mt-2 leading-snug text-muted">{v.text}</p>
+            {OCCASIONS.map((o) => (
+              <article key={o.title} className="group relative aspect-[3/4] overflow-hidden rounded-[2rem]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/img/${o.img}.jpg`} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-6 text-cream">
+                  <h3 className="font-display text-2xl">{o.title}</h3>
+                  <p className="mt-1 text-sm leading-snug text-cream/85">{o.text}</p>
                 </div>
               </article>
             ))}
           </div>
         </section>
 
-        {/* REZERWACJA — kroki i zdjęcie tej samej wysokości */}
+        {/* REZERWACJA */}
         <section className="bg-peach py-20 lg:py-24">
           <div className="wrap grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
             <div>
@@ -122,8 +185,10 @@ export default function Home() {
                   </li>
                 ))}
               </ol>
-              <div className="mt-9 flex flex-wrap items-center gap-3">
-                <Link href="/rezerwacja" className="rounded-full bg-ember px-7 py-4 font-bold text-white shadow-lg shadow-ember/25 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">Zarezerwuj termin →</Link>
+              <div className="mt-9">
+                <Link href="/rezerwacja" className="inline-block rounded-full bg-ember px-7 py-4 font-bold text-white shadow-lg shadow-ember/25 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">
+                  Zarezerwuj termin →
+                </Link>
               </div>
             </div>
             <div className="relative min-h-[320px] overflow-hidden rounded-[2rem] lg:min-h-0">
@@ -133,7 +198,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* GALERIA + Instagram */}
+        {/* GALERIA */}
         <section className="wrap pt-20 lg:pt-24">
           <h2 className="font-display text-4xl sm:text-5xl">Zajrzyj do środka.</h2>
           <div className="mt-8 grid auto-rows-[160px] grid-cols-2 gap-3 sm:auto-rows-[220px] md:grid-cols-4 lg:gap-4">
@@ -144,18 +209,39 @@ export default function Home() {
               </Link>
             ))}
           </div>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-center">
-            <Link href="/galeria" className="rounded-full border-2 border-ink px-7 py-3 font-bold transition hover:bg-ink hover:text-peach">
+          <div className="mt-8 text-center">
+            <Link href="/galeria" className="inline-block rounded-full border-2 border-ink px-7 py-3 font-bold transition hover:bg-ink hover:text-peach">
               Cała galeria →
             </Link>
-            <a href={CONFIG.instagram} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-4 hover:no-underline">
-              {CONFIG.instagramFollowers} osób obserwuje nas na Instagramie
-            </a>
+          </div>
+        </section>
+
+        {/* ZAUFANIE — opinie i społeczność */}
+        <section className="wrap pt-20 lg:pt-24">
+          <div className="grid items-center gap-8 rounded-[2rem] bg-ink px-8 py-10 text-cream sm:px-12 md:grid-cols-[auto_1fr_auto]">
+            <div className="flex items-baseline gap-3">
+              <span className="font-display text-7xl">{CONFIG.googleRating}</span>
+              <span className="text-4xl text-[#f2a33a]" aria-hidden>★</span>
+            </div>
+            <div>
+              <p className="font-display text-2xl">Goście wracają i polecają.</p>
+              <p className="mt-1 text-cream/75">
+                {CONFIG.googleReviews} opinii w Google i {CONFIG.instagramFollowers} osób, które obserwują nas na Instagramie.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <a href={CONFIG.googleMaps} target="_blank" rel="noreferrer" className="rounded-full bg-peach px-6 py-3 font-bold text-ink transition hover:bg-cream">
+                Opinie w Google →
+              </a>
+              <a href={CONFIG.instagram} target="_blank" rel="noreferrer" className="rounded-full border-2 border-cream/40 px-6 py-3 font-bold transition hover:bg-cream/10">
+                Instagram
+              </a>
+            </div>
           </div>
         </section>
 
         {/* FAQ — pasek */}
-        <section className="wrap pt-20 lg:pt-24">
+        <section className="wrap pt-5">
           <Link href="/regulamin#faq" className="group relative flex flex-col gap-4 overflow-hidden rounded-[2rem] bg-sand px-8 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-10">
             <Dashes className="absolute right-[38%] top-4 hidden w-16 text-paper/60 sm:block" />
             <p className="font-hand text-4xl leading-tight text-paper sm:text-5xl">Odpowiedzi na często zadawane pytania.</p>
@@ -165,7 +251,7 @@ export default function Home() {
           </Link>
         </section>
 
-        {/* KONTAKT — dane po lewej, duża mapa z wizytówką Google po prawej */}
+        {/* KONTAKT */}
         <section className="wrap grid gap-5 py-20 lg:grid-cols-[1fr_1.7fr] lg:py-24">
           <div className="flex flex-col rounded-[2rem] bg-peach p-8 sm:p-10">
             <h2 className="font-display text-4xl">Kontakt.</h2>

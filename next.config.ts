@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Bez znaczka „N” Next.js w rogu podczas pokazu (widoczny tylko w trybie deweloperskim)
+  devIndicators: false,
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
