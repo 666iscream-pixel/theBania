@@ -1,26 +1,80 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Paleta z Instagrama: brzoskwinia z postów, czarna kreska rycin, czerwień „the” z logo,
+   piaskowy i butelkowa zieleń z relacji Q&A. */
+@theme {
+  --color-cream: #fdf1e5;
+  --color-paper: #fff8f0;
+  --color-peach: #fcd9ba;
+  --color-sand: #c48a55;
+  --color-wood: #9a6236;
+  --color-wood-dark: #5f3a1e;
+  --color-ink: #1e1814;
+  --color-muted: #5f5249;
+  --color-line: #edcbaa;
+  --color-ember: #e22a25;
+  --color-moss: #1d4a3a;
+  --font-display: var(--font-open), system-ui, sans-serif;
+  --font-sans: var(--font-open), system-ui, sans-serif;
+  --font-hand: var(--font-caveat), cursive;
+  --font-marker: var(--font-amatic), cursive;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* Nagłówki jak w postach: bardzo grube, z kropką na końcu. Poza warstwą utilities, żeby wygrywały z font-semibold. */
+.font-display {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.hatch {
+  background-image: repeating-linear-gradient(-45deg, rgba(95, 58, 30, 0.2) 0 4px, transparent 4px 8px);
+}
+
+/* Organiczne plamy jak w relacjach Q&A */
+.blob-a {
+  border-radius: 62% 38% 46% 54% / 54% 44% 56% 46%;
+}
+.blob-b {
+  border-radius: 42% 58% 63% 37% / 41% 52% 48% 59%;
+}
+.blob-c {
+  border-radius: 50% 50% 38% 62% / 62% 38% 62% 38%;
+}
+
+/* Deski jak w relacji „Regulamin” */
+.planks {
+  background-color: #b5784a;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(60, 30, 10, 0.35) 0 2px, transparent 2px 140px),
+    repeating-linear-gradient(90deg, transparent 0 40px, rgba(255, 255, 255, 0.04) 40px 70px, transparent 70px 140px),
+    linear-gradient(180deg, #c08355, #a86a3d);
+}
+
+/* Jeden kontener dla nagłówka, sekcji i stopki — wszystko równa się do tej samej linii */
+.wrap {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1280px;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 640px) {
+  .wrap {
+    padding-inline: 2rem;
+  }
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-moss);
+  outline-offset: 3px;
+  border-radius: 8px;
 }
