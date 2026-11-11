@@ -6,7 +6,7 @@ import { Socials } from "@/components/Socials";
 import { NextSlot } from "@/components/NextSlot";
 import { CONFIG } from "@/lib/config";
 
-// Kolejność: pierwsze wrażenie → kim jesteśmy → jak wygląda wizyta → na jaką okazję → rezerwacja → zdjęcia → opinie → kontakt.
+// Kolejność: pierwsze wrażenie → kim jesteśmy → co jest na miejscu → na jaką okazję → rezerwacja → zdjęcia → opinie → kontakt.
 
 const FACTS: { art: ArtName; title: string; text: string }[] = [
   { art: "stove", title: "Piec na drewno", text: "Prawdziwa, miękka para — nie elektryczna sauna." },
@@ -16,10 +16,10 @@ const FACTS: { art: ArtName; title: string; text: string }[] = [
 ];
 
 const VISIT: { img: string; art: ArtName; title: string; text: string }[] = [
-  { img: "steam-room-2", art: "stove", title: "Rozgrzewka.", text: "Piec opalany drewnem daje miękką, głęboką parę. Wchodzicie, ile chcecie — bania jest tylko Wasza." },
-  { img: "witki", art: "venik", title: "Witki.", text: "Brzozowe, dębowe lub eukaliptusowe. Doradzimy zestaw, a na życzenie ceremonię poprowadzi parmistrz." },
-  { img: "cold-plunge", art: "tub", title: "Gorąco i zimno.", text: "Zimna beczka na zewnątrz albo gorąca beczka 40°C z hydromasażem — na zmianę, jak lubicie." },
-  { img: "tea", art: "teapot", title: "Relaks.", text: "Herbata, miód i owoce w strefie wypoczynku. Ogród z hamakiem i grill — bez obcych ludzi obok." },
+  { img: "steam-room-2", art: "stove", title: "Łaźnia parowa", text: "Piec opalany drewnem daje miękką, głęboką parę. Wchodzicie, kiedy chcecie i ile chcecie." },
+  { img: "witki", art: "venik", title: "Witki i parmistrz", text: "Brzozowe, dębowe lub eukaliptusowe. Doradzimy zestaw, a na życzenie ceremonię poprowadzi parmistrz." },
+  { img: "cold-plunge", art: "tub", title: "Gorąca i zimna beczka", text: "Gorąca beczka 40°C z hydromasażem i zimna beczka na zewnątrz — na zmianę, jak lubicie." },
+  { img: "tea", art: "teapot", title: "Strefa relaksu", text: "Herbata, miód i owoce przy stole, ogród z hamakiem i grill — bez obcych ludzi obok." },
 ];
 
 const OCCASIONS = [
@@ -50,14 +50,14 @@ export default function Home() {
       <SiteHeader />
       <main className="overflow-x-clip">
         {/* HERO — tekst i zdjęcie w jednym kontenerze, z oddechem; całość mieści się w pierwszym ekranie */}
-        <section className="bg-peach">
-          <div className="wrap grid gap-8 py-6 lg:h-[calc(100svh-97px)] lg:max-h-[700px] lg:min-h-[520px] lg:grid-cols-[1.05fr_1fr] lg:grid-rows-1 lg:gap-12 lg:py-8">
+        <section className="bg-peach pb-10 lg:pb-12">
+          <div className="wrap grid gap-8 pt-6 lg:h-[calc(100svh-97px-3rem)] lg:max-h-[660px] lg:min-h-[440px] lg:grid-cols-[1.05fr_1fr] lg:grid-rows-1 lg:gap-12 lg:pt-8">
             <div className="order-2 self-center lg:order-1">
               <p className="font-hand text-2xl text-moss">Wrocław · wynajem na wyłączność</p>
-              <h1 className="mt-1 font-display text-[2.6rem] leading-[1.03] sm:text-6xl xl:text-[4rem]">Bania opalana drewnem.</h1>
+              <h1 className="mt-1 font-display text-[2.6rem] leading-[1.03] sm:text-6xl xl:text-[4rem] lg:[@media(max-height:720px)]:text-5xl">Bania opalana drewnem.</h1>
               <p className="mt-4 max-w-md text-lg text-muted">Łaźnia parowa, gorąca beczka i ogród — cały obiekt tylko dla Was. Do 12 osób, codziennie 12:00–00:00.</p>
 
-              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 lg:[@media(max-height:720px)]:mt-5">
                 <Link href="/rezerwacja" className="rounded-full bg-ember px-8 py-4 text-lg font-bold text-white shadow-lg shadow-ember/30 transition hover:-translate-y-0.5 hover:bg-[#c71f1a]">
                   Zarezerwuj termin →
                 </Link>
@@ -69,7 +69,7 @@ export default function Home() {
                 <NextSlot />
               </div>
 
-              <a href={CONFIG.googleMaps} target="_blank" rel="noreferrer" className="group mt-7 flex items-center gap-4 border-t-2 border-ink/10 pt-5 text-sm">
+              <a href={CONFIG.googleMaps} target="_blank" rel="noreferrer" className="group mt-7 flex items-center gap-4 border-t-2 border-ink/10 pt-5 text-sm lg:[@media(max-height:720px)]:mt-5 lg:[@media(max-height:720px)]:pt-4">
                 <span className="whitespace-nowrap font-display text-3xl">
                   {CONFIG.googleRating} <span className="text-2xl text-[#f2a33a]" aria-hidden>★</span>
                 </span>
@@ -123,15 +123,14 @@ export default function Home() {
         {/* JAK WYGLĄDA WIZYTA */}
         <section className="bg-peach py-20 lg:py-24">
           <div className="wrap">
-            <p className="font-hand text-3xl text-moss">Jak wygląda wizyta</p>
-            <h2 className="max-w-2xl font-display text-4xl leading-tight sm:text-5xl">Kilka godzin, po których naprawdę odpoczniesz.</h2>
+            <p className="font-hand text-3xl text-moss">Na miejscu</p>
+            <h2 className="max-w-2xl font-display text-4xl leading-tight sm:text-5xl">Wszystko, czego potrzeba do pełnego relaksu.</h2>
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {VISIT.map((v, i) => (
+              {VISIT.map((v) => (
                 <article key={v.title} className="flex flex-col overflow-hidden rounded-[2rem] bg-paper">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={`/img/${v.img}.jpg`} alt="" loading="lazy" className="h-full w-full object-cover" />
-                    <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-paper font-bold">{i + 1}</span>
                   </div>
                   <div className="flex-1 p-6">
                     <div className="flex items-center justify-between gap-3">
